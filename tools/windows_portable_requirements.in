@@ -1,0 +1,17 @@
+# Minimal runtime used by the Windows x64 portable package.
+# Whisper, CUDA, PyInstaller, test tools, and optional media codecs are
+# intentionally excluded.
+fastapi>=0.115,<1
+httpx>=0.27,<1
+python-multipart>=0.0.9,<1
+uvicorn>=0.30,<1
+# Keep the yt-dlp wheel (Unlicense) and only the optional helpers required for
+# networking/YouTube.  The broad "default" extra also pulls GPL media-tagging
+# code that this subtitle workflow does not use.
+yt-dlp
+yt-dlp-ejs
+brotli
+certifi
+pycryptodomex
+requests
+websockets

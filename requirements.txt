@@ -1,0 +1,19 @@
+# Subtitle Translation Pipeline — Core Dependencies
+pysrt==1.1.2           # SRT subtitle parsing
+pytest==9.1.1          # Testing framework
+httpx2==2.12.0         # Starlette TestClient transport (httpx compatibility is deprecated)
+
+# LLM SDKs (按需安装对应后端)
+# anthropic>=0.39.0    # Claude API
+# openai>=1.55.0       # GPT API
+# zhipuai>=2.0.0       # GLM API
+# google-genai>=1.0.0  # Gemini API
+
+# Whisper 语音识别 (GPU 加速)
+faster-whisper==1.2.1
+ctranslate2==4.5.0     # 必须固定 4.5.0，4.8.x 与 CUDA 12.9 不兼容
+setuptools==80.10.2    # ctranslate2 4.5.0 仍使用 pkg_resources；保持 <81
+# CUDA 运行时 DLL (通过 pip 安装到 Python 3.10)
+# nvidia-cublas-cu12
+# nvidia-cuda-runtime-cu12
+# nvidia-cudnn-cu12

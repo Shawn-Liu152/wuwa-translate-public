@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1f5fae">
+  <meta name="description" content="把鸣潮英文游戏视频字幕，变成术语准确的中文字幕。双源字幕补漏，专门处理人名、游戏术语和识别错误。">
+  <title>菲比字幕工坊｜鸣潮英文视频字幕翻译</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/landing.css?v=20260827-trim2">
+  <link rel="stylesheet" href="/static/pet.css?v=20260729-pet-fit1">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <div class="paper-grain" aria-hidden="true"></div>
+
+  <header class="site-nav">
+    <div class="brand-cluster">
+      <a class="landing-brand" href="/" aria-label="菲比字幕工坊首页">
+        <span class="brand-seal" aria-hidden="true">译</span>
+        <span><b>菲比字幕工坊</b><small>PHOEBE SUBTITLE LAB</small></span>
+      </a>
+      <span class="creator-watermark" translate="no">b站：加藤惠soft</span>
+    </div>
+    <nav aria-label="宣传页导航">
+      <a href="#workflow">怎么使用</a>
+      <a href="#questions">常见问题</a>
+    </nav>
+    <a class="nav-cta" href="/app">打开工作台 <span aria-hidden="true">→</span></a>
+  </header>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="kicker"><span aria-hidden="true">✦</span> 为鸣潮视频做的字幕工具</p>
+        <h1 id="hero-title"><span>把鸣潮游戏视频字幕，</span><em>变成术语准确的中文字幕</em></h1>
+        <p class="hero-lead">双源字幕补漏，专门处理人名、游戏术语和识别错误。英文主播说得再快，菲比也会把可疑句子挑出来给你确认。</p>
+        <div class="hero-actions">
+          <a class="primary-cta" href="/app">立即开始翻译 <span aria-hidden="true">→</span></a>
+          <a class="secondary-cta" href="#workflow">看看怎么用</a>
+        </div>
+        <ul class="trust-list" aria-label="产品特点">
+          <li><span aria-hidden="true">✓</span> 本地运行</li>
+          <li><span aria-hidden="true">✓</span> YouTube + Whisper 补漏</li>
+          <li><span aria-hidden="true">✓</span> 鸣潮官方术语</li>
+        </ul>
+      </div>
+
+      <div class="cover-card" aria-label="菲比字幕翻译效果封面">
+        <figure class="cover-photo">
+          <img src="/static/assets/phoebe-glasses-cover.jpg" alt="戴圆眼镜的菲比表情包" width="1080" height="1080">
+        </figure>
+        <span class="cover-star star-one" aria-hidden="true">✦</span>
+        <span class="cover-star star-two" aria-hidden="true">✦</span>
+      </div>
+    </section>
+
+    <section class="workflow-section section-shell" id="workflow" aria-labelledby="workflow-title">
+      <div class="workflow-visual" aria-hidden="true">
+        <div class="mini-window">
+          <div class="window-head"><span></span><span></span><span></span><b>翻译任务</b></div>
+          <div class="window-body">
+            <div class="fake-title"></div>
+            <div class="fake-line wide"></div>
+            <div class="fake-line"></div>
+            <div class="fake-progress"><i></i></div>
+            <div class="fake-result">术语已锁定 · 双源正在补漏</div>
+          </div>
+        </div>
+        <span class="visual-note note-one">不用逐句复制</span>
+        <span class="visual-note note-two">阶段产物都保留</span>
+      </div>
+
+      <div class="workflow-copy">
+        <p class="kicker">THREE STEPS</p>
+        <h2 id="workflow-title">粘贴链接，然后让流程自己跑</h2>
+        <ol>
+          <li><span>1</span><div><b>创建任务</b><p>粘贴 YouTube 链接，填写必要的 API 配置。</p></div></li>
+          <li><span>2</span><div><b>下载并翻译</b><p>素材下载完成后直接开始翻译，保存过的配置会自动恢复。</p></div></li>
+          <li><span>3</span><div><b>确认并下载</b><p>检查少量风险项，下载最终中文字幕。</p></div></li>
+        </ol>
+        <a class="text-link" href="/app">进入字幕工作台 <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+
+    <section class="questions section-shell" id="questions" aria-labelledby="questions-title">
+      <div class="question-intro">
+        <p class="kicker">GOOD TO KNOW</p>
+        <h2 id="questions-title">开始前，需要知道这些</h2>
+        <p>把限制说清楚，比只说“AI 很强”更重要。</p>
+      </div>
+      <div class="question-list">
+        <details open>
+          <summary>视频和 API Key 会上传到项目服务器吗？</summary>
+          <p>不会。工作台运行在你的 Windows 电脑上；字幕内容只会发送到你自己配置的模型接口。</p>
+        </details>
+        <details>
+          <summary>必须使用昂贵模型吗？</summary>
+          <p>不必须。Round 1 和 Round 2 可以分别选择模型，预算优先时可以全部使用 Flash。</p>
+        </details>
+        <details>
+          <summary>现在支持哪些语言？</summary>
+          <p>翻译核心现支持英语、日语和韩语转简体中文；韩语工作台入口将在后续界面更新中开放。</p>
+        </details>
+        <details>
+          <summary>Whisper 是必须的吗？</summary>
+          <p>不是。自适应模式会先检查 YouTube 英文字幕，质量不足时才运行完整 Whisper。</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <div>
+        <p class="kicker">READY?</p>
+        <h2>下一条鸣潮视频，让菲比替你盯字幕</h2>
+        <p>先把机械重复交给流程，再把时间留给剪辑和内容。</p>
+      </div>
+      <a class="primary-cta" href="/app">打开工作台 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-brand"><span class="brand-seal">译</span><span><b>菲比字幕工坊</b><small>英文 → 中文 · Windows Demo</small></span></div>
+    <p class="creator-credit" translate="no">b站：加藤惠soft</p>
+    <a class="deerflow-signature" href="https://deerflow.tech" target="_blank" rel="noopener noreferrer">Created By Deerflow</a>
+  </footer>
+  <script src="/static/pet.js?v=20260729-pets4"></script>
+</body>
+</html>

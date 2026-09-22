@@ -1,0 +1,1087 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1f5fae">
+  <meta name="description" content="本地视频字幕翻译、术语管理与风险审校工作台">
+  <title>视频字幕翻译工作台</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/app.css?v=20260921-list-css22">
+  <link rel="stylesheet" href="/static/pet.css?v=20260729-pet-fit1">
+</head>
+<body class="workbench-active empty-state">
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <p id="view-announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+  <div class="grain" aria-hidden="true"></div>
+  <dialog id="session-recovery" aria-labelledby="session-recovery-title" aria-describedby="session-recovery-note">
+    <h2 id="session-recovery-title">会话已失效</h2>
+    <p>这不是任务为空，已保存的任务不会因此删除。</p>
+    <p id="session-recovery-note">请从“启动工作台”重新进入。若新页面已恢复连接，可回到本页重新连接，保留当前任务地址。</p>
+    <p class="form-note">若仍失效，请关闭工作台服务后重新启动，使用新打开的页面。重新连接会刷新本页；未保存的修改请先确认。</p>
+    <button type="button" id="session-reconnect">重新连接</button>
+  </dialog>
+
+  <aside class="rail">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">译</span>
+      <div>
+        <b>字幕工作台</b>
+        <small translate="no">SUBTITLE STUDIO</small>
+        <small class="creator-watermark" translate="no">b站：加藤惠soft</small>
+      </div>
+    </div>
+
+    <nav aria-label="工作台导航">
+      <button type="button" class="nav active" data-view="workbench" aria-pressed="true" aria-controls="workbench">
+        <span class="nav-index" aria-hidden="true">01</span><span>工作台</span>
+      </button>
+      <button type="button" class="nav" data-view="review" aria-pressed="false" aria-controls="review">
+        <span class="nav-index" aria-hidden="true">02</span><span>风险审校</span>
+        <span class="nav-count" id="risk-nav-count" aria-label="待处理风险" hidden>0</span>
+      </button>
+      <button type="button" class="nav" data-view="settings" aria-pressed="false" aria-controls="settings">
+        <span class="nav-index" aria-hidden="true">03</span><span>设置与帮助</span>
+      </button>
+    </nav>
+
+    <div class="rail-more" aria-label="更多工具">
+      <span class="rail-more-label">更多工具</span>
+      <button type="button" class="nav nav-more" data-view="glossary" aria-pressed="false" aria-controls="glossary">
+        <span class="nav-index" aria-hidden="true">·</span><span>术语表</span>
+      </button>
+      <button type="button" class="nav nav-more" data-view="prompt" aria-pressed="false" aria-controls="prompt">
+        <span class="nav-index" aria-hidden="true">·</span><span>提示词</span>
+      </button>
+      <button type="button" class="nav nav-more" data-view="guide" aria-pressed="false" aria-controls="guide">
+        <span class="nav-index" aria-hidden="true">·</span><span>使用说明</span>
+      </button>
+      <button type="button" class="nav nav-more" data-view="faq" aria-pressed="false" aria-controls="faq">
+        <span class="nav-index" aria-hidden="true">·</span><span>常见问题</span>
+      </button>
+    </div>
+
+    <div class="rail-foot">
+      <span class="service-status"><span class="dot" aria-hidden="true"></span> 本地服务</span>
+      <small id="health" aria-live="polite">检测中…</small>
+      <small class="app-version" id="app-version" translate="no">v0.2.0-beta.3</small>
+    </div>
+  </aside>
+
+  <main id="main-content">
+    <header class="page-header workbench-header">
+      <div class="hero-copy">
+        <p class="eyebrow" translate="no">PHOEBE JIUBI / SUBTITLE LAB</p>
+        <h1>把每一句，都捞回来</h1>
+        <p class="page-lead">双源对齐、术语统一、风险复核。把素材交给菲比，长视频也会替你认真盯完。</p>
+      </div>
+      <figure class="jiubi-sticker">
+        <img src="/static/assets/phoebe-jiubi.png" alt="菲比啾比表情" width="220" height="220">
+        <span class="phoebe-bubble" aria-hidden="true">我盯着进度呢！</span>
+        <figcaption>
+          <a href="https://commons.moegirl.org.cn/File%3A%E8%8F%B2%E6%AF%94%E8%A1%A8%E6%83%85%E5%8C%85-%E8%8F%B2%E6%AF%94%E5%95%BE%E6%AF%94.png"
+             target="_blank" rel="noopener noreferrer">图片来源</a>
+        </figcaption>
+      </figure>
+      <div class="header-actions" aria-label="工作台操作">
+        <button type="button" class="new-task-button" data-open-new-task>
+          <span aria-hidden="true">＋</span> 新建翻译任务
+        </button>
+        <button type="button" class="refresh-button" id="refresh" aria-label="刷新任务">
+          <span aria-hidden="true">↻</span> 刷新
+        </button>
+      </div>
+    </header>
+
+    <section class="flow-overview empty-state-only" aria-labelledby="flow-title">
+      <div class="flow-intro">
+        <p class="eyebrow" translate="no">WORKFLOW</p>
+        <h2 id="flow-title">四步，字幕就拉好了</h2>
+      </div>
+      <ol class="flow-steps">
+        <li><span>1</span><div><b>获取素材</b><small>粘贴链接或上传 SRT</small></div></li>
+        <li><span>2</span><div><b id="flow-source-evidence">补充源语言证据</b><small>YouTube / Whisper / 剪映</small></div></li>
+        <li><span>3</span><div><b>AI 翻译</b><small>按术语表分批处理</small></div></li>
+        <li><span>4</span><div><b>审校并导出</b><small>确认风险项后下载</small></div></li>
+      </ol>
+    </section>
+
+    <dialog id="new-task-dialog" class="new-task-dialog" aria-labelledby="new-job-title" aria-modal="true">
+      <div class="new-task-dialog-shell">
+        <div class="panel-head new-task-dialog-head">
+          <div>
+            <p class="eyebrow" translate="no">NEW TASK</p>
+            <h2 id="new-job-title">创建翻译任务</h2>
+          </div>
+          <button type="button" class="dialog-cancel" data-close-new-task aria-label="取消并关闭新建任务">取消 <span aria-hidden="true">×</span></button>
+        </div>
+
+        <fieldset class="new-task-mode" aria-label="选择素材来源">
+          <legend class="sr-only">任务创建方式</legend>
+          <label>
+            <input type="radio" name="new_task_mode" value="url" aria-controls="new-task-url-panel" checked>
+            <span><b>YouTube / URL</b><small>从链接获取字幕、视频与封面</small></span>
+          </label>
+          <label>
+            <input type="radio" name="new_task_mode" value="upload" aria-controls="new-task-upload-panel">
+            <span><b>上传已有字幕</b><small>已有两份源语言 SRT？直接上传，可附视频或音频</small></span>
+          </label>
+        </fieldset>
+
+        <div class="new-task-dialog-body">
+          <section id="new-task-url-panel" class="new-task-mode-panel" data-new-task-panel="url">
+            <div class="mode-panel-heading">
+              <p class="eyebrow" translate="no">FROM URL</p>
+              <h3>粘贴视频链接</h3>
+            </div>
+
+          <form id="url-form">
+            <div class="quick-create-row">
+              <div class="quick-create-fields">
+                <div class="quick-create-url">
+                  <label for="video-url">YouTube 视频链接</label>
+                  <input required id="video-url" name="url" type="url" autocomplete="url"
+                         placeholder="粘贴 youtube.com 或 youtu.be 链接">
+                </div>
+                <label for="url-base-url">API Base URL</label>
+                <input required id="url-base-url" name="base_url" type="url" autocomplete="off" spellcheck="false">
+                <label for="url-api-key">API Key</label>
+                <input id="url-api-key" name="api_key" type="password" autocomplete="off" spellcheck="false">
+                <small id="url-api-key-status" class="credential-status" aria-live="polite">尚未保存 API Key</small>
+                <label for="url-model">模型名称</label>
+                <input required id="url-model" name="model" autocomplete="off" spellcheck="false">
+              </div>
+              <button class="run-button quick-create-run" type="submit">
+                <span class="button-label">下载素材</span><span aria-hidden="true">→</span>
+              </button>
+            </div>
+            <p class="form-note" id="url-note" aria-live="polite"></p>
+
+            <details class="advanced-settings quick-advanced">
+              <summary>高级设置</summary>
+
+            <div class="source-settings" data-language-controls>
+              <label for="source-language">源语言
+                <select id="source-language" name="source_language">
+                  <option value="en" selected>英语</option>
+                  <option value="ja">日语</option>
+                  <option value="ko">韩语</option>
+                </select>
+              </label>
+              <label for="target-language">目标语言
+                <select id="target-language" name="target_language">
+                  <option value="zh-CN" selected>简体中文</option>
+                </select>
+              </label>
+              <p class="field-help">两路字幕、Whisper、术语、翻译记忆和风险复核都会使用同一源语言，不能混用。</p>
+            </div>
+
+            <div class="source-settings">
+                <label for="reference-strategy">第二路源语言证据</label>
+                <select id="reference-strategy" name="reference_strategy">
+                  <option value="adaptive" selected>自适应（推荐）</option>
+                  <option value="youtube">仅 YouTube 源语言字幕</option>
+                  <option value="whisper">始终使用本地 Whisper</option>
+                </select>
+                <p class="field-help">YouTube 字幕缺失、与任务源语言不一致或重复严重时，自适应模式才运行完整 Whisper。</p>
+                <label for="video-quality">视频清晰度</label>
+                <select id="video-quality" name="video_quality">
+                  <option value="best">最高可用</option>
+                  <option value="2160">4K · 2160p</option>
+                  <option value="1440">2K · 1440p</option>
+                  <option value="1080" selected>全高清 · 1080p</option>
+                  <option value="720">高清 · 720p</option>
+                  <option value="480">流畅 · 480p</option>
+                </select>
+                <p class="field-help">选择下载上限；源视频没有对应档位时自动回退到更低清晰度。</p>
+                <label for="download-proxy">下载代理</label>
+                <input id="download-proxy" name="proxy" value="http://127.0.0.1:7890" autocomplete="off" spellcheck="false">
+                <label for="url-round2-model">Round 2 模型（可选）</label>
+                <input id="url-round2-model" name="round2_model" autocomplete="off" spellcheck="false">
+                <p class="field-help">留空时沿用主模型。</p>
+                <label for="url-batch-size">批次大小</label>
+                <input id="url-batch-size" name="batch_size" type="number" inputmode="numeric" min="1" max="100" value="28">
+                <label class="setting-toggle" for="url-local-whisper">
+                  <span>风险段局部 Whisper</span>
+                  <input id="url-local-whisper" name="local_whisper" type="checkbox">
+                </label>
+                <label for="youtube-auth">YouTube 登录验证</label>
+                <select id="youtube-auth" name="youtube_auth">
+                  <option value="none" selected>匿名下载（未限流时可用）</option>
+                  <option value="chrome">自动读取 Google Chrome 登录状态</option>
+                  <option value="file">直接粘贴 Cookie 文本</option>
+                </select>
+                <p class="field-help">选择 Google Chrome 就会自动读取，无需上传文件；浏览器数据库被占用时请先完全退出 Chrome。</p>
+                <div id="youtube-cookie-paste-row" class="cookie-file-row cookie-paste-row" hidden>
+                  <div class="cookie-paste-heading">
+                    <label for="youtube-cookies-text">粘贴 Cookie 文本</label>
+                    <button id="paste-youtube-cookies" type="button">读取剪贴板</button>
+                  </div>
+                  <textarea id="youtube-cookies-text" name="youtube_cookies_text" rows="6"
+                    autocomplete="off" autocapitalize="off" spellcheck="false"
+                    placeholder="# Netscape HTTP Cookie File&#10;复制全部内容后在这里按 Ctrl + V"></textarea>
+                  <p class="field-help">只接受不超过 1 MiB 的 Netscape cookies.txt 内容。排队时只放在内存，下载开始后才短暂写入当前 Windows 用户的私有目录；不会进入任务目录、日志或任务记录。</p>
+                </div>
+              </div>
+              <div class="toggles">
+                <label><input type="checkbox" name="download_video" checked> 下载视频</label>
+                <label class="required-option" title="双源字幕校对需要与任务一致的源语言字幕">
+                  <input type="checkbox" checked disabled> 下载源语言字幕（必需）
+                </label>
+                <input type="hidden" name="download_subtitles" value="true">
+                <label><input type="checkbox" name="download_thumbnail" checked> 下载封面</label>
+              </div>
+            </details>
+          </form>
+          </section>
+
+          <section id="new-task-upload-panel" class="new-task-mode-panel" data-new-task-panel="upload" hidden>
+            <div class="mode-panel-heading">
+              <p class="eyebrow" translate="no">UPLOAD SRT</p>
+              <h3>上传已有字幕</h3>
+            </div>
+            <form id="job-form">
+              <div class="source-settings" data-language-controls>
+                <label for="direct-source-language">源语言
+                  <select id="direct-source-language" name="source_language">
+                    <option value="en" selected>英语</option>
+                    <option value="ja">日语</option>
+                    <option value="ko">韩语</option>
+                  </select>
+                </label>
+                <label for="direct-target-language">目标语言
+                  <select id="direct-target-language" name="target_language">
+                    <option value="zh-CN" selected>简体中文</option>
+                  </select>
+                </label>
+              </div>
+              <div class="source-block">
+                <label for="capcut-upload">主字幕</label>
+                <input required id="capcut-upload" type="file" name="primary_srt" accept=".srt">
+                <label for="whisper-upload">辅助字幕</label>
+                <input required id="whisper-upload" type="file" name="secondary_srt" accept=".srt">
+                <label for="video-upload">视频或音频 <em>可选，用于复核高风险片段</em></label>
+                <input id="video-upload" type="file" name="video" accept="video/*,audio/*">
+              </div>
+              <button class="run-button prepare-button" type="submit">
+                <span class="button-label">上传素材并创建任务</span><span aria-hidden="true">→</span>
+              </button>
+              <p class="form-note" id="form-note" aria-live="polite"></p>
+            </form>
+          </section>
+        </div>
+      </div>
+    </dialog>
+
+    <section id="workbench" class="view active" aria-label="工作台">
+      <div class="workspace-grid">
+
+        <section class="jobs panel" aria-labelledby="jobs-title">
+          <div class="jobs-title-row">
+            <p class="eyebrow" translate="no">RECENT RUNS</p>
+            <h2 id="jobs-title">最近任务</h2>
+            <span id="job-count" class="step-label">0 个任务</span>
+          </div>
+          <div id="job-status-summary" class="job-status-summary" role="group" aria-label="任务状态摘要">
+            <button type="button" data-job-summary-filter="active" aria-pressed="false"><span>进行中</span><b data-job-summary-count="active">0</b></button>
+            <button type="button" data-job-summary-filter="review" aria-pressed="false"><span>待我审校</span><b data-job-summary-count="review">0</b></button>
+            <button type="button" data-job-summary-filter="failed" aria-pressed="false"><span>失败</span><b data-job-summary-count="failed">0</b></button>
+            <button type="button" data-job-summary-filter="today" aria-pressed="false"><span>今日完成</span><b data-job-summary-count="today">0</b></button>
+          </div>
+          <div class="jobs-tools-row">
+            <label class="sr-only" for="job-search">搜索任务</label>
+            <input id="job-search" type="search" autocomplete="off" placeholder="搜索标题、频道或任务名">
+            <select id="job-status-filter" aria-label="任务状态">
+              <option value="">全部状态</option>
+              <option value="active">进行中</option>
+              <option value="paused">已暂停</option>
+              <option value="completed">已完成</option>
+              <option value="failed">处理失败</option>
+              <option value="archived">已归档</option>
+            </select>
+            <button type="button" id="continue-last">继续上次任务</button>
+          </div>
+          <div class="batch-toolbar" id="batch-bar" aria-live="polite">
+            <label class="job-select-all" title="选择当前可见任务">
+              <input type="checkbox" id="job-select-all" aria-label="选择当前可见任务">
+              <span aria-hidden="true">全选</span>
+            </label>
+            <span class="batch-count" id="batch-count">已选择 0 项</span>
+            <span class="batch-toolbar-spacer" aria-hidden="true"></span>
+            <button type="button" class="batch-action" id="batch-retry" disabled>重试所选</button>
+            <button type="button" class="batch-action" id="batch-archive" disabled>归档</button>
+            <button type="button" class="batch-action batch-danger" id="batch-delete" disabled>删除</button>
+            <button type="button" class="batch-action" id="batch-clear" disabled>取消选择</button>
+          </div>
+          <div id="jobs-list" class="jobs-list" aria-live="polite">
+            <div class="empty">
+              <span class="empty-mark" aria-hidden="true">＋</span>
+              <b>还没有任务</b>
+              <small>粘贴链接或上传两份 SRT，马上开始</small>
+              <button type="button" data-open-new-task>新建翻译任务</button>
+            </div>
+          </div>
+        </section>
+        <div class="task-detail-scroll">
+          <section class="detail panel" id="detail" aria-live="polite">
+            <div class="detail-tablist" role="tablist" aria-label="任务详情">
+              <button type="button" id="detail-tab-overview" class="detail-tab" role="tab"
+                      data-detail-tab="overview" aria-selected="true" aria-controls="detail-panel-overview" tabindex="0">Overview</button>
+              <button type="button" id="detail-tab-pipeline" class="detail-tab" role="tab"
+                      data-detail-tab="pipeline" aria-selected="false" aria-controls="detail-panel-pipeline" tabindex="-1">Pipeline</button>
+              <button type="button" id="detail-tab-log" class="detail-tab" role="tab"
+                      data-detail-tab="log" aria-selected="false" aria-controls="detail-panel-log" tabindex="-1">Log</button>
+              <button type="button" id="detail-tab-files" class="detail-tab" role="tab"
+                      data-detail-tab="files" aria-selected="false" aria-controls="detail-panel-files" tabindex="-1">Files</button>
+              <button type="button" id="detail-tab-risk" class="detail-tab" role="tab"
+                      data-detail-tab="risk" aria-selected="false" aria-controls="detail-panel-risk" tabindex="-1">Risk</button>
+            </div>
+            <section id="detail-panel-overview" class="detail-tabpanel" role="tabpanel"
+                     aria-labelledby="detail-tab-overview" tabindex="0">
+              <div class="empty detail-empty">
+                <span class="empty-mark" aria-hidden="true">⌁</span>
+                <b>点一条任务，菲比继续</b>
+                <small>这里会显示进度、待办操作、产物与技术日志</small>
+              </div>
+            </section>
+            <section id="detail-panel-pipeline" class="detail-tabpanel" role="tabpanel"
+                     aria-labelledby="detail-tab-pipeline" tabindex="0" hidden>
+              <div class="empty detail-empty"><b>选择任务后查看 Pipeline</b></div>
+            </section>
+            <section id="detail-panel-log" class="detail-tabpanel" role="tabpanel"
+                     aria-labelledby="detail-tab-log" tabindex="0" hidden>
+              <div class="empty detail-empty"><b>选择任务后查看 Log</b></div>
+            </section>
+            <section id="detail-panel-files" class="detail-tabpanel" role="tabpanel"
+                     aria-labelledby="detail-tab-files" tabindex="0" hidden>
+              <div class="empty detail-empty"><b>选择任务后查看 Files</b></div>
+            </section>
+            <section id="detail-panel-risk" class="detail-tabpanel" role="tabpanel"
+                     aria-labelledby="detail-tab-risk" tabindex="0" hidden>
+              <div class="empty detail-empty"><b>选择任务后查看 Risk</b></div>
+            </section>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section id="review" class="view" aria-label="风险审校">
+      <section class="review-panel panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow" translate="no">RISK QUEUE</p>
+            <h2>风险审校</h2>
+          </div>
+          <div class="filters">
+            <label class="sr-only" for="risk-filter">风险状态</label>
+            <select id="risk-filter" autocomplete="off">
+              <option value="unresolved" selected>待我处理</option>
+              <option value="review">待人工复核</option>
+              <option value="pending">待处理</option>
+              <option value="resolved">已修正</option>
+              <option value="verified">已确认</option>
+              <option value="auto_resolved">自动处理完成</option>
+              <option value="advisory">仅供参考</option>
+              <option value="">全部风险</option>
+            </select>
+            <button type="button" class="icon-button" id="load-risks" title="刷新风险" aria-label="刷新风险">↻</button>
+          </div>
+        </div>
+        <section class="review-task-context" id="review-task-context" aria-live="polite">
+          <div class="review-task-identity">
+            <span class="review-task-cover" id="review-task-cover" aria-hidden="true">审</span>
+            <div>
+              <span class="review-task-label">当前审校任务</span>
+              <b id="review-task-title">尚未选择已完成任务</b>
+              <small id="review-task-meta">可直接在这里选择任务，不必返回工作台</small>
+            </div>
+          </div>
+          <label class="review-task-picker" for="review-task-select">
+            <span>切换已完成任务</span>
+            <select id="review-task-select" name="review_task" autocomplete="off" disabled>
+              <option value="">正在读取任务…</option>
+            </select>
+          </label>
+        </section>
+        <p class="hint">选择已完成任务后，这里会并排展示两路英文、首轮译文与自动修正；保存后生成 <code translate="no">final.reviewed.zh.srt</code>，不会覆盖模型原始产物。</p>
+        <section id="review-delivery" class="overview-download" aria-live="polite" hidden></section>
+        <div id="risk-summary" class="risk-summary" aria-live="polite"></div>
+        <div class="review-toolbar">
+          <div class="review-bulk-actions">
+            <button type="button" id="bulk-recommended">批量采用推荐结果</button>
+            <button type="button" id="bulk-verify">全部确认无误</button>
+          </div>
+          <span class="shortcut-hint">快捷键：1 Round 1 · 2 Round 2 · Enter 保存</span>
+        </div>
+        <div id="risk-list" class="risk-list" aria-live="polite">
+          <div class="empty">尚未选择已完成任务</div>
+        </div>
+        <nav id="risk-pagination" class="risk-pagination" aria-label="风险分页" hidden>
+          <button type="button" id="risk-prev">上一页</button>
+          <span id="risk-page-status"></span>
+          <button type="button" id="risk-next">下一页</button>
+        </nav>
+      </section>
+    </section>
+
+    <section id="glossary" class="view" aria-label="术语表">
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow" translate="no">GLOSSARY</p>
+            <h2>术语表管理</h2>
+          </div>
+          <div class="filters">
+            <label for="glossary-source-language">源语言
+              <select id="glossary-source-language">
+                <option value="en" selected>英语</option>
+                <option value="ja">日语</option>
+                <option value="ko">韩语</option>
+              </select>
+            </label>
+            <label class="sr-only" for="glossary-search">搜索术语</label>
+            <input id="glossary-search" name="glossary_search" type="search"
+                   autocomplete="off" placeholder="搜索英文或中文…">
+            <button type="button" class="icon-button" id="load-glossary" title="刷新术语表" aria-label="刷新术语表">↻</button>
+          </div>
+        </div>
+        <div class="glossary-toolbar">
+          <div id="glossary-stats" class="step-label" aria-live="polite"></div>
+          <button type="button" class="icon-button add-term" id="add-term-toggle" aria-expanded="false" aria-controls="glossary-add-form">＋ 新增术语</button>
+        </div>
+        <div id="glossary-add-form" class="glossary-add-form" hidden>
+          <div class="settings">
+            <label for="term-en">英文<input id="term-en" name="term_en" autocomplete="off" placeholder="例如：Resonator…"></label>
+            <label for="term-zh">中文<input id="term-zh" name="term_zh" autocomplete="off" placeholder="例如：共鸣者…"></label>
+            <label for="term-cat">分类
+              <select id="term-cat" name="term_category" autocomplete="off">
+                <option value="">无</option><option value="character">角色</option><option value="system">系统</option>
+                <option value="currency">货币</option><option value="enemy">敌人</option><option value="lore">设定</option>
+                <option value="location">地点</option><option value="faction">阵营</option>
+              </select>
+            </label>
+          </div>
+          <button type="button" class="run-button" id="term-save">
+            <span class="button-label">保存术语</span><span aria-hidden="true">→</span>
+          </button>
+          <p class="form-note" id="term-note" aria-live="polite"></p>
+        </div>
+        <div id="glossary-list" class="glossary-list" aria-live="polite"><div class="empty">加载中…</div></div>
+      </section>
+    </section>
+
+    <section id="prompt" class="view" aria-label="提示词">
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow" translate="no">PROMPT TEMPLATE</p>
+            <h2>提示词模板</h2>
+          </div>
+          <div class="filters">
+            <label for="prompt-source-language">模板源语言
+              <select id="prompt-source-language">
+                <option value="en" selected>英语 → 简体中文</option>
+                <option value="ja">日语 → 简体中文</option>
+                <option value="ko">韩语 → 简体中文</option>
+              </select>
+            </label>
+            <button type="button" class="icon-button" id="load-prompt" title="重新加载" aria-label="重新加载提示词">↻</button>
+            <button type="button" class="save-prompt" id="save-prompt">保存模板</button>
+          </div>
+        </div>
+        <p class="hint">模板必须保留 <code>{glossary}</code>、<code>{subtitles}</code>、<code>{format_example}</code>、<code>{established_terms_section}</code> 与 <code>{tricky_terms}</code>。保存后只影响之后开始的翻译任务。</p>
+        <label class="sr-only" for="prompt-editor">提示词模板内容</label>
+        <textarea id="prompt-editor" name="prompt_template" class="prompt-editor"
+                  autocomplete="off" spellcheck="false" placeholder="正在加载模板…"></textarea>
+        <p class="form-note" id="prompt-note" aria-live="polite"></p>
+      </section>
+    </section>
+
+    <section id="settings" class="view" aria-label="设置">
+      <form id="app-settings-form">
+        <div class="settings-heading">
+          <div>
+            <p class="eyebrow" translate="no">MY WORKBENCH</p>
+            <h2>把常用习惯放在这里</h2>
+            <p>普通配置保存在当前 Windows 用户目录；API Key 单独保存到系统凭据管理器，页面只显示保存状态。</p>
+          </div>
+          <span class="settings-stamp" aria-hidden="true">本机设置</span>
+        </div>
+
+        <div class="settings-dashboard">
+          <fieldset class="settings-card settings-card-workflow">
+            <legend><span>01</span>任务默认</legend>
+            <p class="settings-card-note">每次创建 YouTube 任务时自动带入。</p>
+            <label class="setting-field">第二路源语言证据
+              <select name="reference_strategy">
+                <option value="adaptive">自适应（推荐）</option>
+                <option value="youtube">仅 YouTube 字幕</option>
+                <option value="whisper">始终使用本地 Whisper</option>
+              </select>
+            </label>
+            <label class="setting-field">视频清晰度
+              <select name="video_quality">
+                <option value="best">最高可用</option>
+                <option value="2160">4K · 2160p</option>
+                <option value="1440">2K · 1440p</option>
+                <option value="1080">全高清 · 1080p</option>
+                <option value="720">高清 · 720p</option>
+                <option value="480">流畅 · 480p</option>
+              </select>
+            </label>
+            <label class="setting-field">下载与翻译代理
+              <input name="proxy" autocomplete="off" spellcheck="false" placeholder="例如：http://127.0.0.1:7890">
+            </label>
+          </fieldset>
+
+          <fieldset class="settings-card settings-card-model">
+            <legend><span>02</span>模型与接口</legend>
+            <label class="setting-field">主模型
+              <input name="model" autocomplete="off" spellcheck="false">
+            </label>
+            <label class="setting-field">Round 2 模型（可选）
+              <input name="round2_model" autocomplete="off" spellcheck="false">
+              <small>留空时沿用主模型。</small>
+            </label>
+            <label class="setting-field">API Base URL
+              <input name="base_url" type="url" autocomplete="off" spellcheck="false">
+            </label>
+            <label class="setting-field">API Key
+              <input name="api_key" type="password" autocomplete="off" spellcheck="false">
+              <small id="settings-api-key-status" class="credential-status" aria-live="polite">尚未保存 API Key</small>
+            </label>
+            <button type="button" id="forget-api-key">忘记已保存 API Key</button>
+            <label class="setting-field">批次大小
+              <input name="batch_size" type="number" inputmode="numeric" min="1" max="100">
+            </label>
+            <label class="setting-toggle">
+              <span><b>风险段局部 Whisper</b></span>
+              <input name="local_whisper" type="checkbox">
+            </label>
+          </fieldset>
+
+          <fieldset class="settings-card settings-card-review">
+            <legend><span>03</span>审校习惯</legend>
+            <p class="settings-card-note">控制风险列表与任务详情的默认展示。</p>
+            <label class="setting-field">每页风险条数
+              <select name="risk_page_size">
+                <option value="10">10 条</option>
+                <option value="20">20 条</option>
+                <option value="30">30 条</option>
+                <option value="50">50 条</option>
+              </select>
+            </label>
+            <label class="setting-field">风险页默认筛选
+              <select name="risk_default_filter">
+                <option value="unresolved">待我处理</option>
+                <option value="review">待人工复核</option>
+                <option value="">全部风险</option>
+              </select>
+            </label>
+            <label class="setting-field">技术日志默认状态
+              <select name="log_visibility">
+                <option value="auto">运行或失败时展开</option>
+                <option value="open">始终展开</option>
+                <option value="closed">始终收起</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset class="settings-card settings-card-play">
+            <legend><span>04</span>界面与宠物</legend>
+            <p class="settings-card-note">保存后立即切换，不需要刷新页面。</p>
+            <div class="pet-picker" role="radiogroup" aria-label="选择桌面宠物">
+              <label class="pet-choice">
+                <input type="radio" name="pet_id" value="feibi">
+                <span class="pet-choice-preview" style="--pet-sheet: url('/static/assets/pets/thumbs/feibi.webp')" aria-hidden="true"></span>
+                <b>菲比</b>
+              </label>
+              <label class="pet-choice">
+                <input type="radio" name="pet_id" value="coletta">
+                <span class="pet-choice-preview" style="--pet-sheet: url('/static/assets/pets/thumbs/coletta.webp')" aria-hidden="true"></span>
+                <b>珂莱塔</b>
+              </label>
+              <label class="pet-choice">
+                <input type="radio" name="pet_id" value="phrolova">
+                <span class="pet-choice-preview" style="--pet-sheet: url('/static/assets/pets/thumbs/phrolova.webp')" aria-hidden="true"></span>
+                <b>弗洛洛</b>
+              </label>
+              <label class="pet-choice">
+                <input type="radio" name="pet_id" value="taffy">
+                <span class="pet-choice-preview" style="--pet-sheet: url('/static/assets/pets/thumbs/taffy.webp')" aria-hidden="true"></span>
+                <b>塔菲</b>
+              </label>
+            </div>
+            <label class="setting-toggle">
+              <span><b>显示桌面宠物</b><small>关闭后可随时回到这里重新叫出来</small></span>
+              <input type="checkbox" name="pet_enabled" role="switch">
+            </label>
+            <label class="setting-toggle">
+              <span><b>允许空闲漫步</b><small>只在没有任务运行时偶尔走动</small></span>
+              <input type="checkbox" name="pet_roam" role="switch">
+            </label>
+            <label class="setting-toggle">
+              <span><b>减少动态效果</b><small>停用背景、横幅和宠物的循环动画</small></span>
+              <input type="checkbox" name="motion_reduced" role="switch">
+            </label>
+          </fieldset>
+        </div>
+
+        <div class="settings-actions">
+          <p id="settings-note" class="form-note" aria-live="polite">普通配置由本机后端原子保存；API Key 不会写入 JSON 或浏览器存储。</p>
+          <button type="button" id="reset-app-settings">恢复默认</button>
+          <button type="submit" class="run-button"><span class="button-label">保存设置</span><span aria-hidden="true">✓</span></button>
+        </div>
+      </form>
+    </section>
+
+    <section id="guide" class="view help-view" aria-label="使用说明">
+      <div class="manual-cover">
+        <div>
+          <p class="eyebrow" translate="no">PHOEBE'S FIELD NOTES / 01</p>
+          <h2>第一次用？<br>照着这张小抄走</h2>
+          <p>不需要先弄懂所有文件。填好链接和 API 配置，下载后直接翻译，最后导出成品。</p>
+          <button type="button" class="help-primary" data-help-action="new-task">现在创建任务 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="manual-cover-mark" aria-hidden="true">
+          <span>英</span><i>→</i><span>中</span>
+          <b>字幕说明书</b>
+        </div>
+      </div>
+
+      <nav class="manual-route-grid" aria-label="按当前情况选择说明">
+        <a href="#guide-first-run"><span>01</span><b>第一次使用</b><small>从链接到最终字幕</small></a>
+        <a href="#guide-download"><span>02</span><b>下载被拦了</b><small>429 / Cookie</small></a>
+        <a href="#guide-files"><span>03</span><b>该下哪个文件</b><small>认准最终字幕</small></a>
+      </nav>
+
+      <div class="manual-layout">
+        <section class="manual-main" id="guide-first-run" aria-labelledby="guide-first-title">
+          <div class="manual-section-head">
+            <span class="manual-tab">FIRST RUN</span>
+            <div><h3 id="guide-first-title">完整流程，六步够了</h3><p>黄色是需要你操作的地方，蓝色由程序处理。</p></div>
+          </div>
+          <ol class="manual-timeline">
+            <li>
+              <span class="manual-number">1</span>
+              <div><h4>填写链接和 API 配置</h4><p>输入视频链接、API Base URL、API Key 和主模型；保存过的配置会自动恢复。</p></div>
+              <em>你来</em>
+            </li>
+            <li>
+              <span class="manual-number">2</span>
+              <div><h4>选择源语言来源</h4><p>自适应会先检查 YouTube 源语言字幕；缺失或质量差时，才调用本地 Whisper 补回。</p></div>
+              <em class="machine">自动</em>
+            </li>
+            <li>
+              <span class="manual-number">3</span>
+              <div><h4>直接开始翻译</h4><p>下载完成后确认当前模型即可开始；Round 2 留空会沿用主模型。</p></div>
+              <em>你来</em>
+            </li>
+            <li>
+              <span class="manual-number">4</span>
+              <div><h4>等待翻译完成</h4><p>可以随时暂停。已成功批次写进 manifest，恢复时不会从头重复付费。</p></div>
+              <em class="machine">自动</em>
+            </li>
+            <li>
+              <span class="manual-number">5</span>
+              <div><h4>只处理真正的风险</h4><p>到“风险审校”查看人名、漏译、否定和数字问题。快捷键：1 用 Round 1、2 用 Round 2、Enter 保存。</p></div>
+              <em>你来</em>
+            </li>
+            <li>
+              <span class="manual-number">6</span>
+              <div><h4>下载并整理</h4><p>没做人工修改就下载 <code>final.zh.srt</code>；保存过人工审校则优先下载 <code>final.reviewed.zh.srt</code>。想让目录清爽时，点击“整理过程文件”，它不会删除任何文件。</p></div>
+              <em>完成</em>
+            </li>
+          </ol>
+        </section>
+
+        <aside class="manual-aside" aria-label="使用前检查">
+          <section class="manual-check-card">
+            <span class="scribble-label">开工前 30 秒</span>
+            <h3>先看这四项</h3>
+            <ul class="tick-list">
+              <li>VPN 节点能正常打开 YouTube</li>
+              <li>下载组件正常；FFmpeg 仅影响视频下载</li>
+              <li>模型接口地址以 <code>/v1</code> 结尾；远程接口只允许 HTTPS</li>
+              <li>API Key 已安全保存，或准备在本次会话重新输入</li>
+            </ul>
+          </section>
+          <section class="manual-tip-card">
+            <b>菲比的小建议</b>
+            <p>先拿 5–10 分钟的视频试跑。确认模型、代理和术语效果后，再处理一两个小时的长视频。</p>
+          </section>
+        </aside>
+      </div>
+
+      <section class="manual-alert" id="guide-download" aria-labelledby="guide-download-title">
+        <div class="alert-icon" aria-hidden="true">429</div>
+        <div>
+          <p class="eyebrow" translate="no">YOUTUBE CHECK</p>
+          <h3 id="guide-download-title">出现“确认不是机器人”怎么办？</h3>
+          <ol>
+            <li>换一个能正常打开 YouTube 的 VPN 节点。</li>
+            <li>仍失败时，在当前任务点击“更换 Cookie 并重试”。</li>
+            <li>选择 Google Chrome 自动读取登录状态；如果数据库被占用，先完全退出 Chrome。</li>
+            <li>不想关闭 Chrome 时，选择“粘贴 Cookie 文本”，读取剪贴板或按 <code>Ctrl + V</code>。</li>
+          </ol>
+          <p>Cookie 只用于本次下载：排队时仅在内存，下载开始才短暂写入当前用户私有目录；成功、失败、取消或暂停后都会销毁，崩溃残留会在下次启动前清理。旧失败任务可以重新粘贴 Cookie 后重试，不需要重新创建。</p>
+          <button type="button" class="help-secondary" data-help-action="download-options">打开下载选项</button>
+        </div>
+      </section>
+
+      <section class="file-guide" id="guide-files" aria-labelledby="guide-files-title">
+        <div class="manual-section-head">
+          <span class="manual-tab">FILES</span>
+          <div><h3 id="guide-files-title">文件很多，只记住前两个</h3><p>其他文件用于恢复和排查，会统一收进“过程文件”文件夹。</p></div>
+        </div>
+        <div class="file-map">
+          <article class="file-best"><span>人工审校后</span><code>final.reviewed.zh.srt</code><b>最优先下载</b></article>
+          <article><span>自动流程完成</span><code>final.zh.srt</code><b>直接使用</b></article>
+          <article><span>过程文件</span><code>英文来源 / manifest / risk / round2</code><b>统一收纳，不删除</b></article>
+        </div>
+      </section>
+    </section>
+
+    <section id="faq" class="view help-view" aria-label="常见问题">
+      <div class="faq-cover">
+        <div>
+          <p class="eyebrow" translate="no">PHOEBE'S FIELD NOTES / 02</p>
+          <h2>先别重跑，<br>答案多半在这里</h2>
+          <p>按报错里的关键词搜索，例如“429”“Whisper”“Round 2”或“字幕文件”；也可以直接在失败任务的错误横幅上点“查看处理办法”跳到对应条目。</p>
+        </div>
+        <div class="faq-search-wrap">
+          <label for="faq-search">搜索问题</label>
+          <input id="faq-search" type="search" autocomplete="off" placeholder="输入报错或功能名称…">
+          <small id="faq-result-count" aria-live="polite">66 个常见问题</small>
+        </div>
+      </div>
+
+      <div class="faq-layout">
+        <aside class="faq-index" aria-label="问题分类">
+          <b>快速定位</b>
+          <a href="#faq-download">下载与 Cookie</a>
+          <a href="#faq-source">字幕与 Whisper</a>
+          <a href="#faq-translation">模型与翻译</a>
+          <a href="#faq-export">审校与导出</a>
+        </aside>
+
+        <div class="faq-content" id="faq-list">
+          <section class="faq-group" id="faq-download">
+            <div class="faq-group-title"><span>01</span><h3>下载与 Cookie</h3></div>
+            <details class="faq-item" data-faq-keywords="新建 创建任务 抽屉 弹窗 上传 srt youtube url">
+              <summary><span>Q</span>创建任务的表单在哪里？</summary>
+              <div><p><b>现象：</b>工作台不再一直显示创建任务的长表单。<br><b>原因：</b>创建入口已集中到弹窗，并会按素材来源只显示当前需要的字段。<br><b>操作步骤：</b>点击顶部或空状态中的“新建翻译任务”，先选择“YouTube / URL”或“上传已有字幕”，再填写对应字段；关闭后再次打开，当前页面内已填写的内容仍会保留。</p><button type="button" data-help-action="new-task">打开新建任务</button></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="接口地址 endpoint api 模型 配置 保存 恢复">
+              <summary><span>Q</span>为什么首次打开时模型和接口都是空的？</summary>
+              <div><p><b>现象：</b>首次使用没有预选模型或供应商接口。<br><b>原因：</b>模型与接口决定字幕发送到哪里，工作台不会替你做供应商选择。<br><b>操作步骤：</b>在新建 URL 任务时填写 API Base URL、API Key 和模型名称。普通配置会跨程序重启恢复；Key 只显示“已安全保存”，不会回显原文。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="会话无效 任务列表读取失败 启动 401 重新启动 bootstrap 登录失效">
+              <summary><span>Q</span>启动后提示“工作台会话无效 / 任务列表读取失败”</summary>
+              <div><p><b>现象：</b>刚启动就看到任务列表读取失败或会话无效。<br><b>原因：</b>服务重启或浏览器会话失效后，需要重新建立本地安全连接；这不表示任务丢失。<br><b>操作步骤：</b>更新到当前版本后重新从桌面启动器打开。工作台已运行时，重复双击启动器会重新打开现有页面，不会再启动一个冲突的服务；只有现有实例不可用时才创建新实例。看到“会话已失效”时，先使用启动器新打开的页面；若仍失效，关闭工作台服务后重新启动。新页面已恢复后，旧页可点“重新连接”刷新并保留当前任务地址；未成功的保存或导出不会自动重放。</p></div>
+            </details>
+            <details class="faq-item" data-faq-code="job_state" data-faq-keywords="operation_blocked metadata_update_error cancelled interrupted 任务当前状态不允许执行此操作 任务信息更新失败 任务已取消 服务重启中断 状态 刷新 job_state">
+              <summary><span>Q</span>错误码是 operation_blocked / cancelled / interrupted，任务卡住不能操作</summary>
+              <div><p><b>现象：</b>失败横幅显示 <code>operation_blocked</code>（任务当前状态不允许执行此操作）、<code>metadata_update_error</code>（任务信息更新失败）、<code>cancelled</code>（任务已取消）或 <code>interrupted</code>（服务重启中断了任务）。<br><b>原因：</b>这四类都不是模型或字幕的问题，而是任务状态与页面显示不同步：任务可能正在运行、已经被取消，或者工作台在下载/翻译途中被重启，页面上仍停留在旧状态。<code>cancelled</code> 与 <code>interrupted</code> 的产物都会保留，已经写入 <code>manifest</code> 的批次不会重复付费。<br><b>操作步骤：</b>先刷新任务列表或重新打开工作台页面，确认真实状态后再操作。<code>interrupted</code> 会复用已保存的接口、模型和安全 Key，点“继续失败批次”即可；只有凭据被接口拒绝时才需要在设置页更新。<code>cancelled</code> 如果确实不再需要，直接删除任务即可。</p></div>
+            </details>
+            <details class="faq-item" data-faq-code="youtube_auth_required" data-faq-keywords="429 too many requests 机器人 登录 cookie youtube 下载失败 youtube_auth_required 登录凭据不可用">
+              <summary><span>Q</span>YouTube 提示 429 或“确认不是机器人”</summary>
+              <div><p>当前 VPN 出口或匿名会话被 YouTube 限流。先换节点；仍失败就在当前任务点击“更换 Cookie 并重试”，选择自动读取 Google Chrome，或直接粘贴 Netscape cookies.txt 内容。不要连续无认证重试，也不需要删除并重建任务。</p><button type="button" data-help-action="download-options">查看首次下载选项</button></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="自动降级 降级 清晰度 单一流 画质下降 format 不可用 重试 下载失败">
+              <summary><span>Q</span>提示“当前清晰度不可用，已自动降级重试”</summary>
+              <div><p><b>现象：</b>下载日志出现降级提示，任务仍继续。<br><b>原因：</b>所选清晰度在该视频上没有可用格式（常见于低热度视频或刚上传的视频），下载器会自动退回“单一流”方式：画质可能从 1080p 降到 720p 左右，但保证有音轨，流程不中断。<br><b>操作步骤：</b>无需处理，等任务正常完成即可；若成品画质确实不足，删除任务后选更低的目标清晰度重建一次，通常能直接命中可用格式。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="会话不匹配 匿名 重试 page needs to be reloaded cookie 摘除 youtube">
+              <summary><span>Q</span>提示“YouTube 会话不匹配，已改用匿名方式重试”</summary>
+              <div><p><b>现象：</b>带 Cookie 下载时日志出现该提示，随后任务继续。<br><b>原因：</b>YouTube 检测到 Cookie 与当前网络出口不匹配（典型报错 page needs to be reloaded），此时带着 Cookie 反而更容易失败；下载器会自动摘掉 Cookie，用匿名身份重试一次。<br><b>操作步骤：</b>无需处理。Cookie 文件不会被修改或删除，只是这一次重试不使用它；若匿名重试仍失败，会按普通下载失败处理并给出具体原因。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="ffmpeg 合并 异常 本地合并 nonetype 下载失败 视频文件">
+              <summary><span>Q</span>提示“yt-dlp 合并异常，已改用 ffmpeg 本地合并”</summary>
+              <div><p><b>现象：</b>下载日志出现该提示，任务仍继续并产出视频。<br><b>原因：</b>yt-dlp 在把音视频合成为一个文件时自身崩溃（已知触发点：'NoneType' object has no attribute 'lower'）。下载器会改用本机 ffmpeg 直接合并已下载的音视频分片，不重新下载。<br><b>操作步骤：</b>无需处理。若提示后仍然失败，说明本机缺少 ffmpeg 或分片本身不完整，按普通下载失败的提示处理即可。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="为什么 触发 机器人验证 避免 防止 vpn 共享 ip 限流 频率 请求">
+              <summary><span>Q</span>为什么会触发机器人验证，怎样尽量避免？</summary>
+              <div><p>YouTube 会按公网 IP、访客或账号会话以及请求频率判断流量。多人共用的 VPN 出口、短时间反复创建或重试任务、浏览器验证和下载使用不同 IP，都更容易触发。建议使用稳定且人数较少的节点；一个任务失败后不要马上连续重试；先在同一 VPN 节点下用 Chrome 正常打开 YouTube并完成验证，再让应用读取 Chrome；Cookie 只在确实需要时使用。应用已把下载任务串行处理，避免多个视频同时轰击 YouTube，但无法保证永远不触发平台风控。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="第一次 首次 创建任务 cookie txt 上传 自动读取 google chrome 匿名">
+              <summary><span>Q</span>第一次创建任务一定要提供 Cookie 吗？</summary>
+              <div><p>不需要。未被限流时选择“匿名下载”即可；需要登录验证时，可让应用自动读取 Google Chrome，或选择“直接粘贴 Cookie 文本”。应用会记住认证方式，但不会保存 Cookie 正文。</p><button type="button" data-help-action="download-options">打开下载选项</button></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="google chrome cookie database locked permission denied 浏览器 关闭 粘贴">
+              <summary><span>Q</span>自动读取 Google Chrome Cookie 失败</summary>
+              <div><p>Windows 可能锁住 Chrome 的 Cookie 数据库。完全退出 Chrome，检查任务管理器里没有残留进程再试；不想关闭浏览器时，改选“直接粘贴 Cookie 文本”，从剪贴板读取 Netscape cookies.txt 内容。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="cookie 安全 隐私 删除 保存 登录凭证">
+              <summary><span>Q</span>Cookie 会不会被保存或上传？</summary>
+              <div><p><b>现象：</b>粘贴 Cookie 后，担心登录凭据留在便携目录、云盘或任务备份中。<br><b>原因：</b>Cookie 只交给项目当前 Python 环境中的 yt-dlp 请求 YouTube，不会写入任务 JSON、技术日志、下载产物或 <code>download/&lt;任务&gt;</code>。排队时正文只在进程内存；下载真正开始时才在当前 Windows 用户专属、关闭继承权限的本地临时目录生成随机文件。成功、失败、取消、暂停和强制停止都会删除并清空；异常断电留下的旧版或临时文件会在下次启动恢复任务前清理。<br><b>操作步骤：</b>优先匿名下载；确实需要登录时再使用 Chrome 或粘贴 Cookie。暂停、重启或崩溃后必须重新粘贴，系统不会为了方便而保留凭据。Cookie 等同登录凭证，请勿分享。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="代理 vpn 翻译 中转站 失败 连接">
+              <summary><span>Q</span>下载走代理，模型翻译也会走吗？</summary>
+              <div><p><b>现象：</b>下载或模型请求无法连接本机代理。<br><b>原因：</b>首次固定填写 <code>http://127.0.0.1:7890</code>，同一地址会传给下载与翻译阶段，并由本机设置跨程序重启恢复。<br><b>操作步骤：</b>代理工具监听其他地址时直接修改并保存；不使用代理时可以清空。代理字段不得包含用户名或密码。</p></div>
+            </details>
+            <details class="faq-item" data-faq-code="download_error" data-faq-keywords="所有 下载 都失败 素材下载失败 缺少 yt_dlp 模块 运行环境 依赖 安装 重装 start_web download_error 重试下载">
+              <summary><span>Q</span>从网址创建任务时下载必失败，只提示“素材下载或处理失败”</summary>
+              <div><p><b>现象：</b>用 <code>start_web.bat</code> 启动工作台后，所有“YouTube / URL”任务都在下载阶段失败，任务只显示“素材下载或处理失败”。<br><b>原因：</b>旧版下载子进程用 <code>-I</code> 隔离模式启动，会忽略启动环境注入的依赖路径；当首选运行环境的 yt_dlp 位于 <code>.runtime_deps</code> 而不是自带 site-packages 时，下载进程因此找不到 yt_dlp 模块。<br><b>操作步骤：</b>更新并重启工作台。新版让下载子进程与启动环境使用同一套依赖布局，并在缺失模块时把失败原因明确标为“缺少 yt_dlp 模块”。若重启后仍提示缺少模块，请运行项目根目录的 <code>install_web.bat</code> 重新安装依赖，再重启工作台。</p></div>
+            </details>
+          </section>
+
+          <section class="faq-group" id="faq-source">
+            <div class="faq-group-title"><span>02</span><h3>字幕与 Whisper</h3></div>
+            <details class="faq-item" data-faq-keywords="英文残留 未翻译 混英文 漏译 untranslated_source_cues 审校 sfx 括号 音效">
+              <summary><span>Q</span>成品里为什么还有几条没翻译的英文？</summary>
+              <div><p><b>现象：</b>任务完成后任务卡提示“成片含 N 条未翻译英文句”；下载的字幕里个别条目仍是英文原文。<br><b>原因：</b>来源字幕的 ASR 质量或模型漏译会让极少数句子没有中文译文；[笑声]、[掌声] 这类括号音效标注属于设计内保留，不计入未翻译。<br><b>操作步骤：</b>进入“风险审校”页逐条确认或补译，确认全部必审条目后导出 final.reviewed.zh.srt。如果未翻译条目很多，通常是来源字幕质量不足，建议更换来源或补一份剪映/Whisper 字幕再重翻。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="补充第二源 剪映 whisper 二次上传 重新翻译 已完成任务 补充证据 只下字幕">
+              <summary><span>Q</span>只下载了字幕的任务，之后还能补充剪映/Whisper 第二源吗？</summary>
+              <div><p><b>现象：</b>创建任务时没有下载视频（无法本地 Whisper），质量评估提示建议补充第二源证据。<br><b>原因：</b>自适应与 Whisper 策略需要视频文件，只下字幕的任务只能用 YouTube 字幕作证据；但任务完成或失败后随时可以补上传剪映 SRT。<br><b>操作步骤：</b>打开该任务的详情页，展开“补充剪映字幕（可选第二源证据）”，上传剪映导出的源语言 SRT；任务会回到“待翻译”状态，重新点“开始全量翻译”即可用新证据重翻（证据改变会重翻全部批次，不属于断点续跑）。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="便携版 ffmpeg whisper 缺少 视频下载 上传 srt youtube 字幕">
+              <summary><span>Q</span>便携版提示没有 FFmpeg 或 Whisper，还能翻译吗？</summary>
+              <div><p><b>现象：</b>状态栏提示缺少 FFmpeg 或本地 Whisper，视频下载和自适应识别选项会自动停用。<br><b>原因：</b>基础便携版只内置安全运行翻译与获取 YouTube 字幕所需的组件，不捆绑体积很大的视频转码器和 GPU 识别模型。封面会保留 YouTube 原始图片格式，VTT 字幕由工作台在本机转换为 SRT，不需要 FFmpeg。<br><b>操作步骤：</b>可以直接上传已有 SRT，或选择有对应源语言字幕的 YouTube 视频继续翻译。需要下载视频或生成“黑框白字2”带字幕视频时，请自行安装带 libass 的 FFmpeg 和中文字体并重启工作台；需要无字幕视频识别时，再安装可选 Whisper 环境。API Key 的安全保存方式不受这些可选组件影响。审校页显示“真正待处理 0”并已生成已审校字幕后，自动处理完成的条目不会再次拦截视频生成。最后一条必审项保存后显示“审校已完成”，点击“生成交付文件”即可生成黑框白字2 MP4；同一区域可下载已审校 SRT、查看进度、取消或重试，并打开当前任务目录。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="日语 英语 源语言 不匹配 上传 srt 校验">
+              <summary><span>Q</span>日语或韩语任务提示源语言不匹配，或为什么音乐提示没有进入审核？</summary>
+              <div><p><b>现象：</b>上传的 SRT 与选择的英语、日语或韩语不一致时，任务会在创建前拒绝；[音楽]、[음악]、[拍手]、[박수]、（笑）、(웃음) 和 ♪ 不再显示为空译文风险。<br><b>原因：</b>任务的源语言必须与字幕正文一致，不能只靠文件名或下拉框声明。纯音乐和音效标记不包含需要翻译的对白。<br><b>操作步骤：</b>请上传与任务源语言一致的人工/自动字幕或 Whisper 结果；多语言混合视频先导出对应语言轨道。音乐标记无需人工处理；标记旁有对白时请保留正文。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="whisper 什么时候触发 自适应 本地识别">
+              <summary><span>Q</span>Whisper 到底什么时候会运行？</summary>
+              <div><p>高级设置选择“自适应”时，YouTube 源语言字幕缺失、与任务语言不一致或质量不足才会运行完整 Whisper；选择“始终使用本地 Whisper”则每次运行。风险复核中的局部 Whisper 只处理需要音频证据的片段。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="whisper permissionerror winerror 5 拒绝访问 python cuda dll 启动失败">
+              <summary><span>Q</span>Whisper 启动时提示“WinError 5：拒绝访问”</summary>
+              <div><p>系统可能禁止读取某个可选 Python 或 NVIDIA 目录。该目录并不一定是当前 Whisper 真正使用的环境；旧版本在扫描 CUDA DLL 时会因此中断。更新并重启工作台后，程序会跳过无权访问的可选目录，继续检查项目运行环境。若随后仍提示缺少 cuDNN，请在“技术日志”确认实际缺少的 DLL，再按日志安装对应 CUDA 运行库。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="youtube 没字幕 自动下载 缺失 回退">
+              <summary><span>Q</span>YouTube 没有任务源语言字幕怎么办？</summary>
+              <div><p>在高级设置中选择“自适应”并保持“下载视频”开启，系统会转用本地 Whisper。仅 YouTube 模式没有字幕时会直接失败，因为它没有可用的英文来源。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="剪映 srt 可选 上传 等待 打开 app 找不到 安装路径">
+              <summary><span>Q</span>为什么必须上传剪映字幕，怎样直接打开剪映？</summary>
+              <div><p><b>现象：</b>旧英语任务可能仍停在“等待上传剪映主字幕”；日语和韩语自动多源任务无需剪映也能继续。<br><b>原因：</b>新版会比较 YouTube、Whisper 与可选剪映字幕，只有质量更高的来源才成为主源；浏览器启动桌面程序仍需本地工作台查找剪映专业版/CapCut。<br><b>操作步骤：</b>需要补充剪映证据时点击“打开剪映”，识别当前任务源语言并导出 SRT 后上传。找不到剪映时可设置 <code>SUBTITLE_CAPCUT_EXECUTABLE</code>；不上传时继续使用自动选择的同语言来源。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="music 音乐 空字幕 重复 滚动 字幕 模型连续漏译 round 1">
+              <summary><span>Q</span>为什么出现 [Music]、空字幕或重复句？</summary>
+              <div><p><b>现象：</b>字幕中出现 [Music]、空行或重复句；旧版本也可能在 Round 1 显示“模型连续漏译字幕”。<br><b>原因：</b>YouTube 滚动字幕和 ASR 会产生舞台标记与重叠窗口；旧版没有把带主播前缀的 <code>&gt;&gt; [music]</code> 识别为纯音乐，模型按要求返回空译文后又被漏译校验拦截。<br><b>操作步骤：</b>更新并重启工作台，打开失败任务后重新运行同一任务即可复用已经完成的批次。最终导出会清理音乐标记和相邻重复；极短字幕中的有效内容会先合并到相邻字幕，纯标记和空内容才会被清理。技术产物或旧风险记录仍可能保留原始证据。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="术语 普通词 Window Level Slow Burn Launch 连续漏译 重试">
+              <summary><span>Q</span>为什么普通英文单词会触发“模型连续漏译字幕”？</summary>
+              <div><p><b>现象：</b>句子本身已经翻译完整，但日志反复要求补译 Window、Level、Slow、Burn、Launch 等词。<br><b>原因：</b>旧版把所有命中的术语都当成必须逐字出现的硬术语；这些词在普通口语中并不总是游戏 UI 名称。<br><b>操作步骤：</b>更新并重启工作台，再对失败任务使用续跑。新版仍会把这些译名作为提示，但只有人物、地点、正式多词术语或明显 UI 形式才会触发阻断重试；已经成功的批次会从 manifest 恢复。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="时间轴 对不上 延迟 提前 滞后 linger timing whisper youtube 滚动字幕">
+              <summary><span>Q</span>为什么字幕和说话时间对不上？</summary>
+              <div><p><b>现象：</b>字幕比人声晚出现、说完后仍停留很久，或有的句子一闪而过。<br><b>原因：</b>YouTube 滚动字幕会把同一句拆成多个窗口；只合并文字会留下异常的窗口首尾时间。当前版本会识别十秒以上的异常字幕，在自适应模式下保留 YouTube 英文文本、采用 Whisper 的语音时间，再把校准后的时间传给中文成品；Whisper 不负责替换正文翻译。<br><b>操作步骤：</b>重启工作台后，用“自适应”来源策略重新创建任务。旧任务已经写入原时间轴，不会自动改写；如需修复旧成品，请保留视频和过程文件后重新创建任务。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="半句 几个字 截断 10ms 滚动 字幕 丢失 whisper">
+              <summary><span>Q</span>为什么一句话会只剩半句或几个字？</summary>
+              <div><p>原因通常是 YouTube 滚动字幕把句尾单独切成约 10 毫秒的片段，旧版本会把它误当噪声删除。当前版本会在翻译前合并有效片段，并在残句较多时自动请求 Whisper 作为第二证据；Whisper 补充失败但 YouTube 字幕仍可用时，任务会继续而不是整体失败。旧任务不会自动重写已经生成的译文，请重新创建同一链接并重新运行，再下载新的最终字幕。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="时间轴重叠 未递增 任务失败 韩语 日语 滚动字幕 overlap failed">
+              <summary><span>Q</span>为什么韩语/日语任务会报“时间轴未递增”或“不合理重叠”而失败？</summary>
+              <div><p><b>现象：</b>上传 YouTube 自动字幕（韩语/日语）后任务失败，提示“字幕 #N 时间轴未递增”或“与前一条发生不合理重叠”。<br><b>原因：</b>YouTube 自动字幕是滚动窗口结构：相邻行时间上重叠约一半（窗口滑动），但文本是上一行的延续而不是重复。旧版本只按时长判断是否合并，滚动行被跳过，重叠的时间轴又传染给最终回填字幕，交付检查因此拒绝。<br><b>操作步骤：</b>更新并重启工作台后重新创建同一任务。当前版本会先把重叠的滚动行裁剪为首尾相接，再按完整句合并，最终字幕不会出现重叠；旧任务不会被自动改写，请重新创建任务。</p></div>
+            </details>
+            <details class="faq-item" data-faq-code="source_unreliable" data-faq-keywords="source_unreliable 素材质量不足 更换来源 重新上传 字幕太少 空字幕 语言不一致 质量不足">
+              <summary><span>Q</span>错误码 source_unreliable：素材质量不足，请更换来源</summary>
+              <div><p><b>现象：</b>失败横幅显示 <code>source_unreliable</code>，原因是“素材质量不足，请更换来源或重新上传”。任务没有进入翻译阶段。<br><b>原因：</b>取到的英文/日文/韩文字幕无法作为可靠翻译证据：可能是自动字幕残句过多、时间轴大面积重叠、正文与所选源语言不一致，或者整份字幕几乎是空的。此时继续翻译只会花掉模型费用换来不可用成品，所以质量门禁会在翻译前拦下。<br><b>操作步骤：</b>不要在同一份素材上反复重试。换一个来源：改用 YouTube 人工字幕轨道、把来源策略切到“始终使用本地 Whisper”，或者自己上传一份与源语言一致的 SRT。确认新素材在预览里能读到完整句子后再重新创建任务。</p></div>
+            </details>
+          </section>
+
+          <section class="faq-group" id="faq-japanese">
+            <div class="faq-group-title"><span>02A</span><h3>日语 → 简体中文</h3></div>
+            <details class="faq-item" data-faq-keywords="日语 日文 日语字幕 语言选择 ja">
+              <summary><span>Q</span>创建日语任务时应该选择什么语言？</summary>
+              <div><p><b>现象：</b>下载或上传后不确定字幕会按哪种语言处理。<br><b>原因：</b>源语言会同时决定 YouTube 字幕、Whisper、术语、翻译记忆和风险复核的规则。<br><b>操作步骤：</b>创建任务时把“源语言”选为“日语”，目标保持“简体中文”；不要把英语 SRT 与日语 SRT 放进同一个任务。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="日语 whisper 日文 自动字幕 下载 youtube">
+              <summary><span>Q</span>YouTube 没有日语字幕时会怎样？</summary>
+              <div><p><b>现象：</b>下载阶段提示没有可用的日语字幕。<br><b>原因：</b>日语任务只接受日语人工/自动字幕或日语 Whisper 证据，不能悄悄回退到英语字幕。<br><b>操作步骤：</b>保持“下载视频”开启并使用“自适应”或“始终使用本地 Whisper”；若视频本身不是日语，请新建对应语言的任务。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="日语 高质量 剪映 主字幕 whisper 双源">
+              <summary><span>Q</span>日语任务可以补充源语言字幕吗？</summary>
+              <div><p><b>现象：</b>任务下载后可以直接翻译，不要求等待额外字幕。<br><b>原因：</b>补充的源语言字幕只是可选证据；系统会按语言匹配、碎片率、重复率和时间轴质量自动判断主来源。<br><b>操作步骤：</b>通常直接开始翻译；手上有剪映导出的日语 SRT 时，再打开“补充剪映源语言字幕（可选）”并上传。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="日语 人名 人物 审校 round 2 风险">
+              <summary><span>Q</span>为什么日语人物名即使译对了也会进入审校？</summary>
+              <div><p><b>现象：</b>风险页显示人物名需要人工确认，但没有自动重翻。<br><b>原因：</b>日语 ASR 的同音人名可能看似合理；系统要求人工确认所有已知人物名，但正确名字本身不是付费 Round 2 的理由。<br><b>操作步骤：</b>对照两路日语证据确认后保存即可；只有人名错误、漏译或与其他强风险同时出现时，才需要 Round 2。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="日语 术语 翻译记忆 prompt 提示词 隔离">
+              <summary><span>Q</span>日语会复用英语术语、提示词或翻译记忆吗？</summary>
+              <div><p><b>现象：</b>担心英语任务的人工修订影响日语任务。<br><b>原因：</b>术语按源/目标语言保存，翻译记忆按语言对隔离，日语也使用独立提示词和 Round 2 指令。<br><b>操作步骤：</b>在“术语库”和“提示词模板”选择日语后再维护内容；旧任务未带语言字段时仍按英语 → 简体中文处理。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="日语 假名 汉字 人名 地名 术语库 whisper 识别">
+              <summary><span>Q</span>日语字幕里的假名人名或地名没有命中术语库怎么办？</summary>
+              <div><p><b>现象：</b>字幕听到了角色或地点的读音，但术语提示中没有出现对应的简中专名。<br><b>原因：</b>日语人工字幕可能使用汉字表记，而 Whisper 和自动字幕通常输出假名；同一个日语专名会同时收录汉字表记和假名读音，避免两种证据因写法不同而漏匹配。<br><b>操作步骤：</b>新建或从头重跑任务以使用新版术语快照；仍未收录的专名请在“术语库”选择“日语”后，把汉字表记和假名读音分别添加为两条术语，并填入同一个简中译名。</p></div>
+            </details>
+          </section>
+
+          <section class="faq-group" id="faq-korean">
+            <div class="faq-group-title"><span>02B</span><h3>韩语 → 简体中文</h3></div>
+            <details class="faq-item" data-faq-keywords="韩语 韩文 韩语字幕 语言选择 ko">
+              <summary><span>Q</span>创建韩语任务时应该选择什么语言？</summary>
+              <div><p><b>现象：</b>下载或上传后不确定字幕会按哪种语言处理。<br><b>原因：</b>源语言会同时决定 YouTube 字幕、Whisper、术语、翻译记忆和风险复核的规则。<br><b>操作步骤：</b>创建任务时把“源语言”选为“韩语”，目标保持“简体中文”；不要把英语 SRT 与韩语 SRT 放进同一个任务。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="韩语 whisper 韩文 自动字幕 下载 youtube">
+              <summary><span>Q</span>YouTube 没有韩语字幕时会怎样？</summary>
+              <div><p><b>现象：</b>下载阶段提示没有可用的韩语字幕。<br><b>原因：</b>韩语任务只接受韩语人工/自动字幕或韩语 Whisper 证据，不能悄悄回退到英语字幕。<br><b>操作步骤：</b>保持“下载视频”开启并使用“自适应”或“始终使用本地 Whisper”；若视频本身不是韩语，请新建对应语言的任务。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="韩语 人名 审校 术语 翻译记忆 prompt 隔离">
+              <summary><span>Q</span>韩语任务的人名和术语是怎么处理的？</summary>
+              <div><p><b>现象：</b>担心韩语任务复用英语术语或翻译记忆，或人物名处理规则不明确。<br><b>原因：</b>术语、翻译记忆和提示词都按源语言隔离，韩语使用独立的 ko-zh-CN 提示词与韩文术语域；韩语人名候选会进入人工确认，正确名字本身不会触发付费 Round 2。<br><b>操作步骤：</b>在“术语库”和“提示词模板”选择韩语后再维护内容；风险审校中对照两路韩语证据确认人名后保存即可。</p></div>
+            </details>
+          </section>
+
+          <section class="faq-group" id="faq-translation">
+            <div class="faq-group-title"><span>03</span><h3>模型与翻译</h3></div>
+            <details class="faq-item" data-faq-keywords="待翻译 占位 不翻译 试运行 dry run api key 已完成">
+              <summary><span>Q</span>为什么字幕全是“[待翻译]”英文？</summary>
+              <div><p>这说明旧任务开启了试运行：它只检查流程和生成占位文件，不会调用模型，也不是真正的完成结果。现在工作台已经移除这个容易误触的选项。打开该任务，在详情中输入 API Key 后点击“开始正式翻译”即可复用已下载的视频、YouTube 字幕和 Whisper 结果，无需重新下载；原试运行占位产物会单独备份。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="round 2 比 round 1 差 覆盖 替换 置信度">
+              <summary><span>Q</span>为什么 Round 2 有时还不如 Round 1？</summary>
+              <div><p><b>现象：</b>Round 2 有时会改动一个与风险无关的词，结果反而不如 Round 1。<br><b>原因：</b>Round 2 是针对明确风险的校错器，不是整句重写器。当前版本默认保留 Round 1；相邻字幕会作为只读语境交给 Reviewer，避免把跨字幕才补全的短语误判为多译。系统只自动采用有源语言证据的最小修正，并拦截低置信度、无关重写、新增否定、未修完残句、数字或术语校验失败的候选；如果实体风险没有被实际修正、候选只改了其他语义，也会回退 Round 1 并留给人工复核。唯一的显示兜底是：日语或韩语 Round 1 已确定残留假名/韩文，而 Round 2 给出无源文字的低置信中文候选时，成品可先使用该候选避免残留，但它仍会留在“待我处理”，不会标成已解决或人工确认；普通文本冲突和阅读速度也只供人工比较。<br><b>操作步骤：</b>若旧任务里已经出现较差的 Round 2，请先在审校页选择 Round 1；要应用新规则，请重新创建同一链接并重新运行，旧版 Round 2 结果不会继续自动复用。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="两个模型 flash 便宜 luna round1 round2 选择">
+              <summary><span>Q</span>两个模型应该怎么选？</summary>
+              <div><p>主模型负责全量翻译。Round 2 只处理明确风险；留空时自动沿用主模型，不需要重复填写。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="上下文 前后两条 半句 残句 多人 reaction 视频标题 记忆">
+              <summary><span>Q</span>为什么跨好几条字幕的半句话更容易译顺了？</summary>
+              <div><p><b>现象：</b>快速 Reaction 或滚动字幕会把一句英文拆成多条，逐条翻译容易产生三个中文残句。<br><b>原因：</b>旧版本只附带前后各两条，并可能在机械批次边界切断完整句。当前版本会在 Token 硬上限内优先保持临近完整句，提供前后六条局部证据、最近十二条对话记忆，并注入视频标题、频道和全片锁定专名。<br><b>操作步骤：</b>新建或从头重跑任务以使用新上下文；旧任务会保留原有 manifest，避免静默改变已经付费生成的译文。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="费用 估算 deepseek flash pro 官方定价 人民币 中转站 缓存">
+              <summary><span>Q</span>页面上的模型费用是怎样估算的？</summary>
+              <div><p>只有内置价格表能够识别的模型才会估算人民币费用，其他模型显示“暂不估算”。由于任务指标没有区分缓存命中 Token，页面按未命中缓存保守计算；实际扣费仍以接口供应商账单为准。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="模型失败 401 429 timeout 接口 异常结构 漏回 id">
+              <summary><span>Q</span>模型为什么会失败或漏回字幕 ID？</summary>
+              <div><p><b>现象：</b>技术日志出现 HTTP 400、401/403、429、超时，提示接口地址为空，或模型漏回少量字幕 ID。<br><b>原因：</b>正式翻译必须明确填写接口地址，配置区会显示“请求将发送至”哪个主机；远程接口只允许 HTTPS，本机 <code>localhost</code>、<code>127.0.0.1</code>、<code>::1</code> 才可使用 HTTP。401/403 通常是 Key、模型权限或中转站问题；429/超时是限流或线路不稳。为防止恶意接口回显 Key、Cookie、字幕或本机路径，工作台不会保存或显示上游原始错误正文，只保留状态码和本地生成的排查提示。结构异常和漏回 ID 会保留已经有效的结果，只补请求缺失 ID；请求体、任务数量、任务目录空间或实时连接达到本机安全上限时，会在不删除已有任务的前提下拒绝新请求。<br><b>操作步骤：</b>确认页面显示的目标主机正确，再检查状态码、模型、接口、代理和请求限制；若看到本机安全上限提示，请先整理旧任务或断开不用的实时页面；修正后在原任务点击“继续失败批次”，不要立即从头重跑。</p></div>
+            </details>
+            <details class="faq-item" data-faq-code="authentication_error" data-faq-keywords="authentication_error api key 无效 过期 无权访问 401 403 密钥 鉴权失败 模型接口">
+              <summary><span>Q</span>错误码 authentication_error：API Key 无效、已过期或无权访问当前模型</summary>
+              <div><p><b>现象：</b>失败横幅显示 <code>authentication_error</code>，任务在预检或第一批停下。<br><b>原因：</b>接口拒绝了已保存凭据，或 Key 没有访问当前模型的权限。<br><b>操作步骤：</b>在设置页重新粘贴完整 Key 并保存，再在原任务点“继续失败批次”。Key 由 Windows Credential Manager 保存；API、设置 JSON、浏览器存储和任务文件都不会返回或记录原文。若系统安全存储不可用，页面会明确提示仅本次会话有效。</p></div>
+            </details>
+            <details class="faq-item" data-faq-code="quota_error" data-faq-keywords="quota_error 账户额度不足 余额不足 充值 insufficient_user_quota billing 欠费 预扣费 403 429 订阅限额 GoUsageLimitError 周额度 重置">
+              <summary><span>Q</span>错误码 quota_error：API 账户/订阅额度不足</summary>
+              <div><p><b>现象：</b>失败横幅显示 <code>quota_error</code>，右侧可能跟着“上游 HTTP 403”或“上游 HTTP 429”。任务在预检或某一批停下，提示“API 账户/订阅额度已用尽”。<br><b>原因：</b>部分服务商用 HTTP 403 加 <code>insufficient_user_quota</code> 表达余额不足，另一些订阅制网关（如 opencode）用 HTTP 429 加 <code>GoUsageLimitError</code> 表达周/月额度用尽——这与 authentication_error（Key 无效）是两回事：你的 Key 没问题，是账户/订阅额度用完了，原地重试不会成功，系统也不会对这类失败自动续跑。<br><b>操作步骤：</b>到服务商后台充值，或查看订阅额度的重置时间；恢复后回工作台在原任务点“继续失败批次”，已写入 manifest 的成功批次不会重译，只补做失败的那几批。</p></div>
+            </details>
+            <details class="faq-item" data-faq-code="configuration_error" data-faq-keywords="configuration_error 模型接口配置无效 接口地址 模型名称 endpoint base url https 非法地址">
+              <summary><span>Q</span>错误码 configuration_error：模型接口配置无效</summary>
+              <div><p><b>现象：</b>失败横幅显示 <code>configuration_error</code>，原因是“模型接口配置无效，请检查接口地址和模型名称”。请求根本没有发出去。<br><b>原因：</b>接口地址或模型名不合法：地址为空、缺协议头、把浏览器网址当成了 API 地址、带了查询参数或账号密码片段，或者用了 HTTP 访问非本机地址。工作台要求远程接口必须是 HTTPS，只有 <code>localhost</code>、<code>127.0.0.1</code>、<code>::1</code> 这三个本机回环地址允许 HTTP；主机名也要能通过域名合法性校验。<br><b>操作步骤：</b>打开设置页，在接口地址输入框点击后从建议列表选择 DeepSeek 官方或 OpenCode Zen 网关，或粘贴完整的 OpenAI 兼容地址（形如 <code>https://…/v1</code>，末尾不要加 <code>/chat/completions</code>）；确认下方“请求将发送至 …”显示的主机正确，再填写模型名。改好后在原任务点“继续失败批次”。</p></div>
+            </details>
+            <details class="faq-item" data-faq-code="provider_unavailable" data-faq-keywords="provider_unavailable api_error invalid_provider_response internal_error 模型接口暂时不可用 稍后重试 返回无效内容 5xx 502 503 超时 限流">
+              <summary><span>Q</span>错误码 provider_unavailable / api_error / invalid_provider_response：接口暂时不可用</summary>
+              <div><p><b>现象：</b>失败横幅显示 <code>provider_unavailable</code>（模型接口暂时不可用）、<code>api_error</code>（模型接口请求失败）、<code>invalid_provider_response</code>（模型接口返回无效内容）或 <code>internal_error</code>，右侧可能跟着“上游 HTTP 429 / 500 / 502 / 503”。<br><b>原因：</b>问题在供应商或线路上，不在你的配置：429 是限流，5xx 是接口自身故障，超时是线路不稳；<code>invalid_provider_response</code> 则是接口返回了 200 但正文不是可用的结构化结果。这几类都可能是暂时的。<br><b>操作步骤：</b>先等一两分钟再点“继续失败批次”——已经写入 <code>manifest</code> 的成功批次不会重复付费，只会重做失败的那几批。如果连续几轮都失败，换一个模型接口或换成官方直连地址；仍在 429 就调小批次大小、降低并发。不要从头重跑整个任务。</p></div>
+            </details>
+            <details class="faq-item" data-faq-code="translation_batch" data-faq-keywords="translation_batch_error round2_invalid_response batch_processing_error pipeline_error 翻译批次失败 批次处理失败 round 2 返回无效结构化结果 继续失败批次 翻译任务失败">
+              <summary><span>Q</span>错误码 translation_batch_error / batch_processing_error / pipeline_error：批次失败</summary>
+              <div><p><b>现象：</b>失败横幅显示 <code>translation_batch_error</code>（翻译批次失败）、<code>round2_invalid_response</code>（Round 2 返回无效结构化结果）、<code>batch_processing_error</code>（批次处理失败）或 <code>pipeline_error</code>（翻译任务失败）。任务已经跑了一段，中途停下。<br><b>原因：</b>某些批次在重试预算内仍然没有拿到可用结果，或者返回的结构缺少字幕 ID。这类失败是局部的：其余批次的译文已经写进 <code>manifest</code>，是有效的、已经付过费的产物。<br><b>操作步骤：</b>在原任务详情里点“继续失败批次”，系统会复用 <code>manifest</code> 只重做缺失的批次，不要选“从头重跑”。<code>round2_invalid_response</code> 同样只需继续——Round 2 会重做这一批，Round 1 的结果保持不变。如果同一批反复失败，在详情里把失败原因展开看一眼：残留英文、缺必需术语或多次未译会在技术日志里给出具体的批次和字幕 ID。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="模型 一直处理中 reasoning 流式 sse 总时限 超时 取消 重试 恢复 manifest">
+              <summary><span>Q</span>模型一直显示处理中，但没有返回译文怎么办？</summary>
+              <div><p><b>现象：</b>技术日志已经显示接口返回 200，但模型持续发送推理片段，几分钟后仍没有完整译文。<br><b>原因：</b>opencode.ai/zen/go 一类网关在慢窗口下单次请求可能拖到 2-3 分钟；旧版本 120 秒读超时会在完整译文返回前掐断连接，触发反复重试直到提示“模型接口暂时不可用”。<br><b>操作步骤：</b>更新并重启工作台。新版把每次流式请求的读超时与总时限都放宽到 300 秒；超过后会关闭当前连接并只重试当前失败批次，已写入 manifest 的成功批次不会重复付费。仍失败时在原任务点击继续，不要从头重跑。高级用户可用 <code>LLM_STREAM_DEADLINE_SECONDS</code> 调整正数秒数。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="RiskItem object has no attribute get 风险生成 局部 whisper 失败 继续批次">
+              <summary><span>Q</span>生成风险后提示“RiskItem object has no attribute get”</summary>
+              <div><p>这不是模型失败，而是旧版本在“风险对象 → 局部 Whisper”交接处混用了对象和字典类型。模型已返回的 Round 1 与风险快照仍然有效。升级并重启应用后，在原任务重新输入 API Key，点击“继续失败批次”；系统会复用 manifest，从风险处理阶段继续，不要选择“从头重跑”。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="人名 术语 菲比 穗穗 violet 错误 审核">
+              <summary><span>Q</span>人名仍然翻错，应该改哪里？</summary>
+              <div><p>先在术语表添加官方英文与中文，再补充常见 ASR 错拼。新任务中，只要所有有效英文证据命中已知人物名或可靠别名，即使 Round 1 已使用官方译名，也会进入“待我处理”供人工确认；确实译错或疑似未知人名时才调用 Round 2，避免为正确人名重复付费。已有任务的不可变风险快照不会被自动重写，需要重新创建任务才能应用新规则。</p><button type="button" data-help-action="glossary">打开术语表</button></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="辅助英文 次英文 whisper youtube 人名 没有进入 审校 漏审">
+              <summary><span>Q</span>为什么辅助英文已经识别出人名，却没有进入人工审校？</summary>
+              <div><p><b>现象：</b>主英文把人物名听错，但 Whisper 或 YouTube 的辅助英文已出现正确名字，风险页却没有必审卡片。<br><b>原因：</b>旧版本只按主英文生成了人物名命中，遗漏了辅助证据中的已知人物名和可靠别名。当前版本会检查所有有效英文证据；已知人物名只加入人工审校，不会单独触发 Round 2。<br><b>操作步骤：</b>更新并重启应用后重新创建任务，在“待我处理”中确认人物名；旧任务的风险快照保持不变，不会自动改写。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="所有人名 人物名 必须 人工确认 round 2 费用">
+              <summary><span>Q</span>为什么译对的人名也出现在人工审校里？</summary>
+              <div><p>人物名属于强制人工确认项，因为 ASR 可能把一个名字识别成另一个真实名字，中文译文看起来正确也不代表人物身份正确。正确译名只进入人工列表，不会单独触发 Round 2；出现漏译、错译或疑似未知人名时才让 Round 2 提供修正建议。确认无误后使用“用 Round 1 译文”或直接保存即可。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="键盘 风险 审校 tab enter 上下箭头 快捷键">
+              <summary><span>Q</span>键盘怎样更快审校风险？</summary>
+              <div><p><b>现象：</b>使用键盘切换到风险审校页后，焦点以前会停留在侧栏，风险卡也不便连续浏览。<br><b>原因：</b>审校页原先主要按鼠标点击设计，缺少进入新页面后的焦点引导与卡片级键盘路径。<br><b>操作步骤：</b>点击导航后焦点会进入当前页面标题；在风险卡上按 <kbd>Enter</kbd> 或空格进入译文编辑，按上、下方向键切换相邻风险。编辑时保留原有快捷键：<kbd>1</kbd> 用 Round 1，<kbd>2</kbd> 用 Round 2，<kbd>Enter</kbd> 保存。</p></div>
+            </details>
+          </section>
+
+          <section class="faq-group" id="faq-export">
+            <div class="faq-group-title"><span>04</span><h3>审校与导出</h3></div>
+            <details class="faq-item" data-faq-keywords="任务详情 tabs overview pipeline log files risk 键盘 左右 home end">
+              <summary><span>Q</span>任务详情里的五个标签怎样切换？</summary>
+              <div><p><b>现象：</b>选中任务后，原来连续显示的进度、日志、文件和风险被分到 Overview、Pipeline、Log、Files、Risk 五个标签。<br><b>原因：</b>详情按用途分区，技术日志可以独立滚动，刷新或实时更新时仍停留在当前标签。<br><b>操作步骤：</b>点击标签切换；键盘焦点位于标签时，按左、右方向键切换相邻标签，按 <kbd>Home</kbd> 跳到 Overview，按 <kbd>End</kbd> 跳到 Risk。选择另一条任务时会回到 Overview。任务列表先显示摘要，文件大小和视频有效性在打开当前任务详情时检查。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="人工审核 太多 风险 待处理 弱风险">
+              <summary><span>Q</span>为什么人工审核条目看起来很多？</summary>
+              <div><p>“待我处理”只显示会影响交付的强风险；普通双源差异和阅读速度属于参考项，不阻塞最终字幕。可以在风险页切换筛选，不需要逐条处理全部参考项。</p><button type="button" data-help-action="review">打开风险审校</button></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="人工修改 翻译记忆 以后沿用 防止污染 相同英文 修改类型">
+              <summary><span>Q</span>人工修改会不会自动影响以后的字幕？</summary>
+              <div><p><b>现象：</b>保存人工译文后，希望系统逐渐记住习惯，但又担心一次误改污染所有任务。<br><b>原因：</b>普通修改现在只进入本机翻译记忆档案，默认不发送给模型。只有你勾选“以后遇到完全相同的英文时，优先沿用这版”，该记录才会被批准；新任务也只在英文证据完全一致且游戏相同时注入，不会按相似句猜测。<br><b>操作步骤：</b>在风险卡填写最终译文和修改类型；一般修改直接保存。确认这条译法可重复使用时再勾选“以后沿用”。已完成任务不会被反向重写。</p><button type="button" data-help-action="review">打开风险审校</button></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="下载 文件很多 整理 过程文件 final reviewed srt 视频 封面">
+              <summary><span>Q</span>怎么把下载目录整理得更清爽？</summary>
+              <div><p><b>现象：</b>一个任务目录里同时出现英文来源、Whisper、Round 1/2、manifest、风险 JSON、配置和证据，找字幕、视频和封面时很碍眼。<br><b>原因：</b>这些都是用于恢复翻译和人工审校的过程文件，不能直接删除，否则审校记录和排查证据会丢失。<br><b>操作步骤：</b>任务完成后，在“下载与存储”点击“整理过程文件”。当前目录只保留 <code>final.zh.srt</code>、已审校时的 <code>final.reviewed.zh.srt</code>、视频和封面；其余文件统一移进“过程文件”子文件夹，文件不会被删除，工作台仍可继续审校和下载。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="api key 密钥 隐私 保存 浏览器 刷新 session storage 代理 密码">
+              <summary><span>Q</span>API Key 和代理凭据会保存在哪里？</summary>
+              <div><p><b>现象：</b>填写密钥后关闭并重开工作台，页面只显示“已安全保存”，不再回显原文。<br><b>原因：</b>普通配置原子写入当前 Windows 用户的 <code>%LOCALAPPDATA%\PhoebeSubtitleLab\settings.json</code>；API Key 单独保存到 Windows Credential Manager 的 <code>PhoebeSubtitleLab/APIKey</code>。API、设置 JSON、浏览器存储、任务文件和日志都不会得到 Key 原文。<br><b>操作步骤：</b>需要更换时在设置页粘贴新 Key 并保存；需要删除时点击“忘记已保存 API Key”。若系统安全存储不可用，页面会提示 Key 仅本次程序会话有效，绝不会退回明文文件。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="工作台 会话无效 401 随机端口 8765 启动脚本 书签">
+              <summary><span>Q</span>为什么旧书签打不开，或者页面提示工作台会话无效？</summary>
+              <div><p><b>现象：</b>手动打开旧的 <code>127.0.0.1:8765</code> 地址、复制以前的页面地址，或服务重启后继续使用旧标签页时，工作台无法读取任务。<br><b>原因：</b>新版每次启动都会先独占一个随机本机端口，并建立只在当前浏览器会话有效的安全凭据；这样其他本机程序不能仅凭固定端口操作任务或读取字幕。凭据不会写入书签、浏览器存储、日志或任务文件。<br><b>操作步骤：</b>关闭旧页面和旧启动窗口，再双击“启动翻译工作台”；只使用本次自动打开的新页面，不要保存本机地址为书签。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="自动字幕 已生成 不能交付 下载 必审风险 人工确认">
+              <summary><span>Q</span>为什么自动字幕已生成，主按钮却要求先审校？</summary>
+              <div><p><b>现象：</b>任务显示已完成，也能看到自动字幕，但主按钮显示“处理必审风险”。<br><b>原因：</b>还有人物名、漏译、数字或术语等会影响交付的强风险没有人工确认；自动流程完成不等于可以安全交付。<br><b>操作步骤：</b>点击“处理必审风险”，在风险页逐条确认或保存；必审项清零后，页面会显示“下载可交付中文字幕”。如需先查看模型自动结果，可下载“自动版字幕”，但它尚未完成审校。</p><button type="button" data-help-action="review">打开风险审校</button></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="审核包 隐私 姓名 reviewer 指标 已停用">
+              <summary><span>Q</span>为什么不再生成浏览器真人审核包和指标？</summary>
+              <div><p><b>现象：</b>工作台不再提供要求填写审核者姓名、判断和证据的独立页面。<br><b>原因：</b>这类页面会把本地审核身份和判断暴露给浏览器，实际收益也不足以抵消隐私风险，因此相关页面、API、审计日志和实时指标已经停用并删除。<br><b>操作步骤：</b>继续使用真实视频自动流程和普通任务风险审校即可；应用不会再收集审核者姓名，也不会把机器结果伪装成人工确认。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="英语质量审核 旧地址 404 隐私 已删除">
+              <summary><span>Q</span>旧的英语质量审核地址为什么打不开？</summary>
+              <div><p><b>现象：</b>访问旧地址 <code>/review/english</code> 或旧的审核 API 会返回 404。<br><b>原因：</b>该隐私敏感功能已经完整退役，页面、脚本、样式、后端存储和本地审核记录均已删除；普通字幕翻译流程不依赖它。<br><b>操作步骤：</b>不需要恢复旧页面；直接创建英语视频任务。需要判断质量时，只查看任务自己的字幕和技术指标，不填写或保存审核者身份。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="风险审校 切换任务 当前任务 已完成 归档">
+              <summary><span>Q</span>怎样在风险审校页切换任务？</summary>
+              <div><p><b>现象：</b>打开风险审校后，不确定正在审哪个任务，或想审另一条已完成任务。<br><b>原因：</b>审校结果会写入当前任务自己的人工状态，必须持续显示任务身份，避免把修改保存到错误任务。<br><b>操作步骤：</b>查看页面顶部的封面、标题、频道、完成时间和必审数量；在“切换已完成任务”下拉框选择目标任务。已归档但已完成的任务也可以在这里继续审校，不必回到工作台。</p><button type="button" data-help-action="review">打开风险审校</button></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="颜色 深蓝 黄色 提示 错误 待确认 删除">
+              <summary><span>Q</span>为什么有些提示是深蓝色并带黄色边框？</summary>
+              <div><p><b>现象：</b>页面上的完成、待确认、错误和永久删除操作使用了不同的蓝黄组合与符号。<br><b>原因：</b>字幕交付和删除属于高影响操作，不能只依赖颜色区分。蓝色对勾表示已完成，黄色感叹号表示还需确认，深蓝色配黄色双边框和叉号表示错误或永久操作。<br><b>操作步骤：</b>先阅读提示标题和具体说明；遇到黄色感叹号，先完成风险审校；遇到叉号提示，按提示修复或重试；点击带叉号的删除按钮前，确认任务或术语确实不再需要。</p></div>
+            </details>
+            <details class="faq-item" data-faq-keywords="暂停 删除 运行中 任务 视频 保留字幕">
+              <summary><span>Q</span>任务可以暂停、删除或只清理视频吗？</summary>
+              <div><p>可以。任务详情提供暂停、继续和删除；完成后还能“清理源媒体但保留字幕”或“清理技术文件”。暂停、取消或强制停止会立即丢弃尚未使用的 Cookie；已经交给下载进程的临时文件会在进程退出路径统一删除。为避免重用旧登录凭据，继续需要认证的下载时请重新粘贴 Cookie。</p></div>
+            </details>
+          </section>
+
+          <div id="faq-empty" class="faq-empty" hidden>
+            <span aria-hidden="true">?</span><b>没找到这个问题</b><p>换个短关键词试试，或者查看当前任务的技术日志。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="workbench-dialog" id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+    <form method="dialog">
+      <span class="dialog-mark" aria-hidden="true">!</span>
+      <div class="dialog-copy">
+        <p class="eyebrow" translate="no">PLEASE CONFIRM</p>
+        <h2 id="confirm-title">确认操作</h2>
+        <p id="confirm-message"></p>
+      </div>
+      <div class="dialog-actions">
+        <button type="submit" id="confirm-cancel" value="cancel">取消</button>
+        <button type="submit" id="confirm-accept" value="confirm" class="primary-action">确认</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <a class="deerflow" href="https://deerflow.tech" target="_blank" rel="noopener noreferrer" title="Created By Deerflow">Created By Deerflow</a>
+  <script src="/static/pet.js?v=20260729-pets4"></script>
+  <script src="/static/workbench-formatters.js?v=20260911-format1"></script>
+  <script src="/static/workbench-core.js?v=20260921-core4"></script>
+  <script src="/static/app.js?v=20260921-list-v29"></script>
+</body>
+</html>

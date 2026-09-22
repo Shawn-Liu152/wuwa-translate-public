@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "game": "wuwa",
+  "source_language": "ko",
+  "target_language": "zh-CN",
+  "terms": [
+    {"source": "카르테시아", "target": "卡提希娅", "category": "character"},
+    {"source": "피비", "target": "菲比", "category": "character"},
+    {"source": "프롤로바", "target": "弗洛洛", "category": "character"},
+    {"source": "자니", "target": "赞妮", "category": "character"},
+    {"source": "브란트", "target": "布兰特", "category": "character"},
+    {"source": "로코코", "target": "洛可可", "category": "character"},
+    {"source": "금희", "target": "今汐", "category": "character"},
+    {"source": "장리", "target": "长离", "category": "character"},
+    {"source": "방랑자", "target": "漂泊者", "category": "character_alias"}
+  ]
+}

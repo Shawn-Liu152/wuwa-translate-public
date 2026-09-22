@@ -1,0 +1,6 @@
+# Optional local speech recognition.
+# Keep ctranslate2 pinned: newer builds may not match the CUDA runtime used by
+# the current Windows workstation.
+faster-whisper>=1.0.0
+ctranslate2==4.5.0
+setuptools<81

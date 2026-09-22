@@ -1,0 +1,4 @@
+# The source installer deliberately consumes the same reviewed, binary-only
+# hash lock as the Windows portable runtime.  Keep this wrapper tiny so a
+# future unpinned package cannot silently re-enter the web install path.
+-r tools/windows_portable_requirements.lock

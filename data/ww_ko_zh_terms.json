@@ -1,0 +1,1268 @@
+[
+ {
+  "zh": "鸣潮",
+  "ko": "명조: 워더링 웨이브",
+  "en": "Wuthering Waves",
+  "note": "韩语标题由汉字词“鳴潮”与“Wuthering Wave”音译组成。"
+ },
+ {
+  "zh": "索拉里斯",
+  "ko": "솔라리스",
+  "en": "Solaris-3",
+  "note": ""
+ },
+ {
+  "zh": "悲鸣",
+  "ko": "비명(悲鳴)",
+  "en": "The Lament",
+  "note": ""
+ },
+ {
+  "zh": "回音",
+  "ko": "울림",
+  "en": "Remnant",
+  "note": ""
+ },
+ {
+  "zh": "残响",
+  "ko": "잔향(殘響)",
+  "en": "Reverberation",
+  "note": ""
+ },
+ {
+  "zh": "海蚀现象",
+  "ko": "비명(悲鳴) 이상(異常) 현상(現象)",
+  "en": "Waveworn Phenomena",
+  "note": ""
+ },
+ {
+  "zh": "黑潮",
+  "ko": "흑조(黑潮)",
+  "en": "The Dark Tide",
+  "note": ""
+ },
+ {
+  "zh": "虹光",
+  "ko": "네온 라이트",
+  "en": "Irideglow",
+  "note": ""
+ },
+ {
+  "zh": "虚质磁暴",
+  "ko": "보이드 스톰",
+  "en": "Void Storm",
+  "note": ""
+ },
+ {
+  "zh": "残象",
+  "ko": "잔상(殘象)",
+  "en": "Tacet Discord",
+  "note": ""
+ },
+ {
+  "zh": "鸣式",
+  "ko": "명식(鳴式)",
+  "en": "Threnodian",
+  "note": ""
+ },
+ {
+  "zh": "岁主",
+  "ko": "수호신(守護神)",
+  "en": "Sentinels",
+  "note": ""
+ },
+ {
+  "zh": "无音区",
+  "ko": "무음구역(無音區域)",
+  "en": "Tacet Field",
+  "note": ""
+ },
+ {
+  "zh": "声骸",
+  "ko": "에코",
+  "en": "Echo",
+  "note": ""
+ },
+ {
+  "zh": "共鸣者",
+  "ko": "공명자(共鳴者)",
+  "en": "Resonator",
+  "note": ""
+ },
+ {
+  "zh": "共鸣能力",
+  "ko": "포르테",
+  "en": "Forte",
+  "note": ""
+ },
+ {
+  "zh": "声痕",
+  "ko": "성흔(聲痕)",
+  "en": "Tacet Mark",
+  "note": ""
+ },
+ {
+  "zh": "心之集域",
+  "ko": "마음의 영역",
+  "en": "Somnoire",
+  "note": ""
+ },
+ {
+  "zh": "日灵",
+  "ko": "태양의 정령(太陽의精靈)",
+  "en": "Soliskin",
+  "note": ""
+ },
+ {
+  "zh": "索拉等阶",
+  "ko": "솔라리스 랭크",
+  "en": "SOL3 Phase",
+  "note": ""
+ },
+ {
+  "zh": "联觉等级",
+  "ko": "연각(聯覺) 레벨",
+  "en": "Union Level",
+  "note": ""
+ },
+ {
+  "zh": "唤取",
+  "ko": "튜닝",
+  "en": "Convene",
+  "note": ""
+ },
+ {
+  "zh": "星声",
+  "ko": "별의 소리",
+  "en": "Astrite",
+  "note": ""
+ },
+ {
+  "zh": "成就",
+  "ko": "업적(業績)",
+  "en": "Trophies",
+  "note": ""
+ },
+ {
+  "zh": "先约电台",
+  "ko": "선약(先約) 방송국(放送局)",
+  "en": "Pioneer Podcast",
+  "note": ""
+ },
+ {
+  "zh": "轻波级",
+  "ko": "경파급(輕波級)",
+  "en": "Common Class",
+  "note": ""
+ },
+ {
+  "zh": "巨浪级",
+  "ko": "거랑급(巨浪級)",
+  "en": "Elite Class",
+  "note": ""
+ },
+ {
+  "zh": "怒涛级",
+  "ko": "노도급(怒濤級)",
+  "en": "Overlord Class",
+  "note": ""
+ },
+ {
+  "zh": "海啸级",
+  "ko": "해일급(海溢級)",
+  "en": "Calamity Class",
+  "note": ""
+ },
+ {
+  "zh": "普攻",
+  "ko": "일반(一般) 공격(攻擊)",
+  "en": "Basic Attack",
+  "note": ""
+ },
+ {
+  "zh": "重击",
+  "ko": "강공격(强攻擊)",
+  "en": "Heavy Attack",
+  "note": ""
+ },
+ {
+  "zh": "空中攻击",
+  "ko": "공중(空中) 공격(攻擊)",
+  "en": "Mid-air Attack",
+  "note": ""
+ },
+ {
+  "zh": "闪避",
+  "ko": "회피(回避)",
+  "en": "Dodge",
+  "note": ""
+ },
+ {
+  "zh": "逆势回击",
+  "ko": "패링",
+  "en": "Counterattack (Parry)",
+  "note": ""
+ },
+ {
+  "zh": "共鸣技能",
+  "ko": "공명(共鳴) 스킬",
+  "en": "Resonance Skill",
+  "note": ""
+ },
+ {
+  "zh": "共鸣解放",
+  "ko": "공명(共鳴) 해방(解放)",
+  "en": "Resonance Liberation",
+  "note": ""
+ },
+ {
+  "zh": "共鸣能量",
+  "ko": "공명(共鳴) 에너지",
+  "en": "Accumulated Energy",
+  "note": ""
+ },
+ {
+  "zh": "共鸣回路",
+  "ko": "공명(共鳴) 회로(回路)",
+  "en": "Forte Circuit",
+  "note": ""
+ },
+ {
+  "zh": "变奏技能",
+  "ko": "변주(變奏) 스킬",
+  "en": "Intro Skill",
+  "note": ""
+ },
+ {
+  "zh": "延奏技能",
+  "ko": "반주(伴奏) 스킬",
+  "en": "Outro Skill",
+  "note": ""
+ },
+ {
+  "zh": "协奏能量",
+  "ko": "협주(協奏) 에너지",
+  "en": "Concerto Energy",
+  "note": ""
+ },
+ {
+  "zh": "固有技能",
+  "ko": "고유(固有) 스킬",
+  "en": "Inherent Skill",
+  "note": ""
+ },
+ {
+  "zh": "共鸣链",
+  "ko": "공명(共鳴) 체인",
+  "en": "Resonance Chain",
+  "note": ""
+ },
+ {
+  "zh": "合鸣",
+  "ko": "화음(和音)",
+  "en": "Sonata",
+  "note": ""
+ },
+ {
+  "zh": "凝夜白霜",
+  "ko": "야밤(夜半)의 서리",
+  "en": "Freezing Frost",
+  "note": ""
+ },
+ {
+  "zh": "熔山裂谷",
+  "ko": "솟구치는 용암(熔巖)",
+  "en": "Molten Rift",
+  "note": ""
+ },
+ {
+  "zh": "彻空冥雷",
+  "ko": "울려퍼지는 뇌음(雷音)",
+  "en": "Void Thunder",
+  "note": ""
+ },
+ {
+  "zh": "啸谷长风",
+  "ko": "스쳐가는 바람",
+  "en": "Sierra Gale",
+  "note": ""
+ },
+ {
+  "zh": "浮星祛暗",
+  "ko": "빛나는 별",
+  "en": "Celestial Light",
+  "note": ""
+ },
+ {
+  "zh": "沉日劫明",
+  "ko": "빛을 삼키는 해",
+  "en": "Sun-sinking Eclipse",
+  "note": ""
+ },
+ {
+  "zh": "隐世回光",
+  "ko": "찬란한(燦爛) 광휘(光輝)",
+  "en": "Rejuvenating Glow",
+  "note": ""
+ },
+ {
+  "zh": "轻云出月",
+  "ko": "떠오르는 구름",
+  "en": "Moonlit Clouds",
+  "note": ""
+ },
+ {
+  "zh": "不绝余音",
+  "ko": "끊임없는 잔향(殘響)",
+  "en": "Lingering Tunes",
+  "note": ""
+ },
+ {
+  "zh": "凌冽决断之心",
+  "ko": "냉철한(冷徹) 결단(決斷)",
+  "en": "Frosty Resolve",
+  "note": ""
+ },
+ {
+  "zh": "幽夜隐匿之帷",
+  "ko": "어둠의 장막(帳幕)",
+  "en": "Midnight Veil",
+  "note": ""
+ },
+ {
+  "zh": "此间永驻之光",
+  "ko": "영원(永遠)의 광채(光彩)",
+  "en": "Eternal Radiance",
+  "note": ""
+ },
+ {
+  "zh": "无惧浪涛之勇",
+  "ko": "파도(波濤)에 맞선 용기(勇氣)",
+  "en": "Tidebreaking Courage",
+  "note": ""
+ },
+ {
+  "zh": "高天共奏之曲",
+  "ko": "하늘의 합주곡(合奏曲)",
+  "en": "Empyrean Anthem",
+  "note": ""
+ },
+ {
+  "zh": "流云逝尽之空",
+  "ko": "끝없는 하늘",
+  "en": "Gusts of Welkin",
+  "note": ""
+ },
+ {
+  "zh": "愿戴荣光之旅",
+  "ko": "영광(榮光)이 깃든 바람",
+  "en": "Windward Pilgrimage",
+  "note": ""
+ },
+ {
+  "zh": "奔狼燎原之焰",
+  "ko": "울부짖는 늑대의 불꽃",
+  "en": "Flaming Clawprint",
+  "note": ""
+ },
+ {
+  "zh": "失序彼岸之梦",
+  "ko": "뒤틀린 피안(彼岸)의 꿈",
+  "en": "Dream of the Lost",
+  "note": ""
+ },
+ {
+  "zh": "荣斗铸锋之冠",
+  "ko": "영광(榮光)의 칼날로 만들어진 왕관(王冠)",
+  "en": "Crown of Valor",
+  "note": ""
+ },
+ {
+  "zh": "息界同调之律",
+  "ko": "만물(萬物)의 숨결에 비롯된 울림",
+  "en": "Law of Harmony",
+  "note": ""
+ },
+ {
+  "zh": "焚羽猎魔之影",
+  "ko": "불타는 깃털을 펼친 사냥꾼의 그림자",
+  "en": "Flamewing's Shadow",
+  "note": ""
+ },
+ {
+  "zh": "命理崩毁之弦",
+  "ko": "운명(運命)을 붕괴(崩壞)시키는 현(弦)",
+  "en": "Thread of Severed Fate",
+  "note": ""
+ },
+ {
+  "zh": "逆光跃彩之约",
+  "ko": "역광(逆光) 속 눈부신 서약(誓約)",
+  "en": "Pact of Neonlight Leap",
+  "note": ""
+ },
+ {
+  "zh": "星构寻辉之环",
+  "ko": "빛을 쫓는 별의 고리",
+  "en": "Halo of Starry Radiance",
+  "note": ""
+ },
+ {
+  "zh": "流金溯真之式",
+  "ko": "흐르는 금(金)빛 속 진리(眞理)의 답(答)",
+  "en": "Rite of Gilded Revelation",
+  "note": ""
+ },
+ {
+  "zh": "冷凝",
+  "ko": "응결(凝結)",
+  "en": "Glacio",
+  "note": ""
+ },
+ {
+  "zh": "热熔",
+  "ko": "용융(熔融)",
+  "en": "Fusion",
+  "note": ""
+ },
+ {
+  "zh": "导电",
+  "ko": "전도(電導)",
+  "en": "Electro",
+  "note": ""
+ },
+ {
+  "zh": "气动",
+  "ko": "기류(氣流)",
+  "en": "Aero",
+  "note": ""
+ },
+ {
+  "zh": "衍射",
+  "ko": "회절(回折)",
+  "en": "Spectro",
+  "note": ""
+ },
+ {
+  "zh": "湮灭",
+  "ko": "인멸(湮滅)",
+  "en": "Havoc",
+  "note": ""
+ },
+ {
+  "zh": "物理",
+  "ko": "물리(物理)",
+  "en": "Physical",
+  "note": ""
+ },
+ {
+  "zh": "长刃",
+  "ko": "대검(大劍)",
+  "en": "Broadblade",
+  "note": ""
+ },
+ {
+  "zh": "迅刀",
+  "ko": "직검(直劍)",
+  "en": "Sword",
+  "note": ""
+ },
+ {
+  "zh": "佩枪",
+  "ko": "권총(拳銃)",
+  "en": "Pistols",
+  "note": ""
+ },
+ {
+  "zh": "臂铠",
+  "ko": "권갑(卷甲)",
+  "en": "Gauntlet",
+  "note": ""
+ },
+ {
+  "zh": "音感仪",
+  "ko": "증폭기(增幅器)",
+  "en": "Rectifier",
+  "note": ""
+ },
+ {
+  "zh": "瑝珑",
+  "ko": "황룡(瑝瓏)",
+  "en": "Huanglong",
+  "note": ""
+ },
+ {
+  "zh": "今州",
+  "ko": "금주(今州)",
+  "en": "Jinzhou",
+  "note": ""
+ },
+ {
+  "zh": "明庭",
+  "ko": "명정(明庭)",
+  "en": "Mingting",
+  "note": ""
+ },
+ {
+  "zh": "越州",
+  "ko": "월주(越州)",
+  "en": "Yuezhou",
+  "note": ""
+ },
+ {
+  "zh": "重州",
+  "ko": "중주(重州)",
+  "en": "Chongzhou",
+  "note": ""
+ },
+ {
+  "zh": "梦州",
+  "ko": "몽주(夢州)",
+  "en": "Mengzhou",
+  "note": ""
+ },
+ {
+  "zh": "诏州",
+  "ko": "조주(詔州)",
+  "en": "Zhaozhou",
+  "note": ""
+ },
+ {
+  "zh": "戎州",
+  "ko": "융주(戎州)",
+  "en": "Rongzhou",
+  "note": ""
+ },
+ {
+  "zh": "乘霄山",
+  "ko": "승소산(乘霄山)",
+  "en": "Mt. Firmament",
+  "note": "英语名称中“Mt.”为“Mount”(山)的缩写。"
+ },
+ {
+  "zh": "华胥研究院",
+  "ko": "화서연구원(華胥硏究院)",
+  "en": "Huaxu Academy",
+  "note": "日语名称未使用“華胥”的常见读音“かしょ”。"
+ },
+ {
+  "zh": "先行公约",
+  "ko": "선행(先行) 공약(公約)",
+  "en": "Pioneer Association",
+  "note": ""
+ },
+ {
+  "zh": "残星会",
+  "ko": "잔성회(殘星會)",
+  "en": "Fractsidus",
+  "note": ""
+ },
+ {
+  "zh": "新联邦",
+  "ko": "신(新) 연방(聯邦)",
+  "en": "New Federation",
+  "note": ""
+ },
+ {
+  "zh": "幽灵猎犬",
+  "ko": "유령(幽靈)사냥단(團)",
+  "en": "Ghost Hounds",
+  "note": ""
+ },
+ {
+  "zh": "呜呜物流",
+  "ko": "무무물류(物流)",
+  "en": "Lollo Logistics",
+  "note": ""
+ },
+ {
+  "zh": "稷廷",
+  "ko": "직정(稷廷)",
+  "en": "Court of Savantae",
+  "note": ""
+ },
+ {
+  "zh": "黑海岸",
+  "ko": "검은 해안(海岸)",
+  "en": "Black Shores",
+  "note": ""
+ },
+ {
+  "zh": "黎那汐塔",
+  "ko": "리나시타",
+  "en": "Rinascita",
+  "note": ""
+ },
+ {
+  "zh": "拉古那",
+  "ko": "라군나",
+  "en": "Ragunna",
+  "note": ""
+ },
+ {
+  "zh": "黎乔利群岛",
+  "ko": "리졸리 군도(群島)",
+  "en": "Riccioli Islands",
+  "note": ""
+ },
+ {
+  "zh": "埃弗拉德金库",
+  "ko": "아베라르도 금고(金庫)",
+  "en": "Averardo Vault",
+  "note": ""
+ },
+ {
+  "zh": "阿纽维林",
+  "ko": "아비놀륨",
+  "en": "Avinoleum",
+  "note": ""
+ },
+ {
+  "zh": "贝奥海域",
+  "ko": "베오 해역(海域)",
+  "en": "Beohr Waters",
+  "note": ""
+ },
+ {
+  "zh": "愚人剧团",
+  "ko": "우인(愚人) 극단(劇團)",
+  "en": "The Fool's Troupe",
+  "note": ""
+ },
+ {
+  "zh": "隐海修会",
+  "ko": "깊은 바다 수도회(修道會)",
+  "en": "Order of the Deep",
+  "note": ""
+ },
+ {
+  "zh": "七丘",
+  "ko": "일곱 언덕",
+  "en": "Septimont",
+  "note": ""
+ },
+ {
+  "zh": "莉莉兰德",
+  "ko": "릴리랜드",
+  "en": "Lilyland",
+  "note": ""
+ },
+ {
+  "zh": "苇原",
+  "ko": "아시노하라",
+  "en": "Ashinohara",
+  "note": ""
+ },
+ {
+  "zh": "穗波",
+  "ko": "호나미",
+  "en": "Honami",
+  "note": ""
+ },
+ {
+  "zh": "拉海洛",
+  "ko": "라하이로이",
+  "en": "Lahai-Roi",
+  "note": ""
+ },
+ {
+  "zh": "星炬学院",
+  "ko": "스타토치 아카데미",
+  "en": "Startorch Academy",
+  "note": ""
+ },
+ {
+  "zh": "深空联合",
+  "ko": "스페이스트렉 콜렉티브",
+  "en": "Spacetrek Collective",
+  "note": ""
+ },
+ {
+  "zh": "罗伊冰原",
+  "ko": "로야 빙원(冰原)",
+  "en": "Roya Frostlands",
+  "note": ""
+ },
+ {
+  "zh": "罗伊族",
+  "ko": "로야족(族)",
+  "en": "Roya Tribe",
+  "note": ""
+ },
+ {
+  "zh": "秘日六席",
+  "ko": "헬리오딕 식스",
+  "en": "Heliodic Six",
+  "note": ""
+ },
+ {
+  "zh": "漂泊者",
+  "ko": "방랑자(放浪者)",
+  "en": "Rover",
+  "note": ""
+ },
+ {
+  "zh": "秧秧",
+  "ko": "양양(秧秧)",
+  "en": "Yangyang",
+  "note": ""
+ },
+ {
+  "zh": "炽霞马小芳",
+  "ko": "치샤(熾霞)마소방(馬小芳)",
+  "en": "ChixiaMa Xiaofang",
+  "note": ""
+ },
+ {
+  "zh": "白芷",
+  "ko": "설지(雪芷)",
+  "en": "Baizhi",
+  "note": "韩语名称未使用“白芷”的汉字词“백지”，可见官方的韩语本地化讨论。"
+ },
+ {
+  "zh": "长离",
+  "ko": "장리(長離)",
+  "en": "Changli",
+  "note": ""
+ },
+ {
+  "zh": "今汐",
+  "ko": "금희(今熙)",
+  "en": "Jinhsi",
+  "note": "英语名称中“汐”使用威妥玛拼音“hsi”。韩语名称未使用“今汐(금석)”的标准转写。"
+ },
+ {
+  "zh": "吟霖",
+  "ko": "음림(吟霖)",
+  "en": "Yinlin",
+  "note": ""
+ },
+ {
+  "zh": "忌炎",
+  "ko": "기염(忌炎)",
+  "en": "Jiyan",
+  "note": ""
+ },
+ {
+  "zh": "凌阳",
+  "ko": "능양(凌陽)",
+  "en": "Lingyang",
+  "note": ""
+ },
+ {
+  "zh": "维里奈",
+  "ko": "벨리나",
+  "en": "Verina",
+  "note": ""
+ },
+ {
+  "zh": "鉴心",
+  "ko": "감심(鑑心)",
+  "en": "Jianxin",
+  "note": ""
+ },
+ {
+  "zh": "桃祈",
+  "ko": "도기(桃祈)",
+  "en": "Taoqi",
+  "note": "日语名称中“桃”使用汉语现地音“tao”。"
+ },
+ {
+  "zh": "渊武",
+  "ko": "연무(淵武)",
+  "en": "Yuanwu",
+  "note": ""
+ },
+ {
+  "zh": "丹瑾",
+  "ko": "단근(丹瑾)",
+  "en": "Danjin",
+  "note": ""
+ },
+ {
+  "zh": "莫特斐",
+  "ko": "모르테피",
+  "en": "Mortefi",
+  "note": ""
+ },
+ {
+  "zh": "散华",
+  "ko": "산화(散華)",
+  "en": "Sanhua",
+  "note": ""
+ },
+ {
+  "zh": "折枝",
+  "ko": "절지(折枝)",
+  "en": "Zhezhi",
+  "note": "日语名称来自“折り枝”。"
+ },
+ {
+  "zh": "相里要",
+  "ko": "상리요(相里要)",
+  "en": "Xiangli Yao",
+  "note": ""
+ },
+ {
+  "zh": "釉瑚",
+  "ko": "유호(釉瑚)",
+  "en": "Youhu",
+  "note": ""
+ },
+ {
+  "zh": "灯灯",
+  "ko": "루미",
+  "en": "Lumi",
+  "note": ""
+ },
+ {
+  "zh": "安可",
+  "ko": "앙코",
+  "en": "Encore",
+  "note": ""
+ },
+ {
+  "zh": "秋水",
+  "ko": "알토",
+  "en": "Aalto",
+  "note": ""
+ },
+ {
+  "zh": "椿",
+  "ko": "카멜리아",
+  "en": "Camellya",
+  "note": ""
+ },
+ {
+  "zh": "守岸人",
+  "ko": "파수인(把守人)",
+  "en": "The Shorekeeper",
+  "note": "英语名称带有定冠词“the”。"
+ },
+ {
+  "zh": "菲比",
+  "ko": "페비",
+  "en": "Phoebe",
+  "note": ""
+ },
+ {
+  "zh": "布兰特",
+  "ko": "브렌트",
+  "en": "Brant",
+  "note": ""
+ },
+ {
+  "zh": "洛可可",
+  "ko": "로코코",
+  "en": "Roccia",
+  "note": ""
+ },
+ {
+  "zh": "赞妮",
+  "ko": "젠니",
+  "en": "Zani",
+  "note": ""
+ },
+ {
+  "zh": "珂莱塔·莫塔里",
+  "ko": "카를로타 몬텔리",
+  "en": "Carlotta Montelli",
+  "note": ""
+ },
+ {
+  "zh": "坎特蕾拉·翡萨烈",
+  "ko": "칸타렐라 피살리아",
+  "en": "Cantarella Fisalia",
+  "note": ""
+ },
+ {
+  "zh": "夏空·托卡塔",
+  "ko": "샤콘 토카타",
+  "en": "Ciaccona Toccata",
+  "note": ""
+ },
+ {
+  "zh": "卡提希娅",
+  "ko": "카르티시아",
+  "en": "Cartethyia",
+  "note": "“芙露德莉斯”见#残象及敌人。"
+ },
+ {
+  "zh": "露帕",
+  "ko": "루파",
+  "en": "Lupa",
+  "note": ""
+ },
+ {
+  "zh": "卡卡罗",
+  "ko": "카카루",
+  "en": "Calcharo",
+  "note": ""
+ },
+ {
+  "zh": "弗洛洛",
+  "ko": "플로로",
+  "en": "Phrolova",
+  "note": ""
+ },
+ {
+  "zh": "仇远",
+  "ko": "구원(仇遠)",
+  "en": "Qiuyuan",
+  "note": ""
+ },
+ {
+  "zh": "嘉贝莉娜",
+  "ko": "갈브레나",
+  "en": "Galbrena",
+  "note": ""
+ },
+ {
+  "zh": "尤诺",
+  "ko": "유노",
+  "en": "Iuno",
+  "note": ""
+ },
+ {
+  "zh": "奥古斯塔",
+  "ko": "아우구스타",
+  "en": "Augusta",
+  "note": ""
+ },
+ {
+  "zh": "朽叶千咲",
+  "ko": "쿠치바 치사",
+  "en": "Kuchiba Chisa",
+  "note": ""
+ },
+ {
+  "zh": "卜灵",
+  "ko": "복링(卜링)",
+  "en": "Buling",
+  "note": "韩语名称未使用“卜靈(복령)”的标准转写。"
+ },
+ {
+  "zh": "琳奈",
+  "ko": "린네",
+  "en": "Lynae",
+  "note": ""
+ },
+ {
+  "zh": "莫宁",
+  "ko": "모니에",
+  "en": "Mornye",
+  "note": ""
+ },
+ {
+  "zh": "爱弥斯",
+  "ko": "에이메스",
+  "en": "Aemeath",
+  "note": ""
+ },
+ {
+  "zh": "陆·赫斯",
+  "ko": "루크·헤르센",
+  "en": "Luuk Herssen",
+  "note": ""
+ },
+ {
+  "zh": "西格莉卡",
+  "ko": "시그리카",
+  "en": "Sigrika",
+  "note": ""
+ },
+ {
+  "zh": "达妮娅",
+  "ko": "데니아",
+  "en": "Denia",
+  "note": ""
+ },
+ {
+  "zh": "绯雪",
+  "ko": "히유키",
+  "en": "Hiyuki",
+  "note": ""
+ },
+ {
+  "zh": "洛瑟菈",
+  "ko": "루실라",
+  "en": "Lucilla",
+  "note": ""
+ },
+ {
+  "zh": "阿布阿布拉克萨斯",
+  "ko": "포포아브락사스",
+  "en": "AbbyAbraxas",
+  "note": "韩服官方曾于2025年11月25日发布公告，称“포포”（布布）将在后续版本调整为“아브”（阿布），但目前仍未实装该改动。"
+ },
+ {
+  "zh": "哥舒临",
+  "ko": "가서림(哥舒臨)",
+  "en": "Geshu Lin",
+  "note": ""
+ },
+ {
+  "zh": "角",
+  "ko": "뿔",
+  "en": "Jué",
+  "note": ""
+ },
+ {
+  "zh": "辛夷",
+  "ko": "신이(辛夷)",
+  "en": "Xinyi",
+  "note": ""
+ },
+ {
+  "zh": "瓦莲京娜",
+  "ko": "발렌티나",
+  "en": "Valentina",
+  "note": ""
+ },
+ {
+  "zh": "史考特·拉贝尔",
+  "ko": "스콧·라벨",
+  "en": "Scott Rabelle",
+  "note": ""
+ },
+ {
+  "zh": "克里斯托弗",
+  "ko": "크리스토포로",
+  "en": "Cristoforo&#91;1&#93;",
+  "note": ""
+ },
+ {
+  "zh": "英白拉多",
+  "ko": "임페라토르",
+  "en": "Imperator",
+  "note": ""
+ },
+ {
+  "zh": "玛格丽特",
+  "ko": "마거리트",
+  "en": "Margherita",
+  "note": ""
+ },
+ {
+  "zh": "罗斯玛丽·翡萨烈",
+  "ko": "로즈메리 피살리아",
+  "en": "Rosemary Fisalia",
+  "note": ""
+ },
+ {
+  "zh": "蜜芽",
+  "ko": "미아",
+  "en": "Mya",
+  "note": ""
+ },
+ {
+  "zh": "阿维狄亚",
+  "ko": "아비디우스",
+  "en": "Avidius",
+  "note": ""
+ },
+ {
+  "zh": "梁东园",
+  "ko": "양동원(梁東園)",
+  "en": "Liang Dongyuan",
+  "note": ""
+ },
+ {
+  "zh": "波仔",
+  "ko": "나미폰",
+  "en": "Namipon",
+  "note": ""
+ },
+ {
+  "zh": "澄夏",
+  "ko": "스미카",
+  "en": "Sumika",
+  "note": ""
+ },
+ {
+  "zh": "扎希拉",
+  "ko": "자히라",
+  "en": "Zahira",
+  "note": ""
+ },
+ {
+  "zh": "德莉珐",
+  "ko": "달리파",
+  "en": "Dhalifa",
+  "note": ""
+ },
+ {
+  "zh": "查特",
+  "ko": "체이스",
+  "en": "Chase",
+  "note": ""
+ },
+ {
+  "zh": "隧者",
+  "ko": "엑소스트라이더",
+  "en": "Exostrider",
+  "note": ""
+ },
+ {
+  "zh": "伤痕",
+  "ko": "스카",
+  "en": "Scar",
+  "note": ""
+ },
+ {
+  "zh": "无相燹（xiǎn）主",
+  "ko": "더 엑시온",
+  "en": "Ovathrax",
+  "note": "尚无模型。"
+ },
+ {
+  "zh": "无冠者",
+  "ko": "크라운리스",
+  "en": "Crownless",
+  "note": ""
+ },
+ {
+  "zh": "无妄者",
+  "ko": "무망자(無妄者)",
+  "en": "Dreamless",
+  "note": ""
+ },
+ {
+  "zh": "鸣钟之龟",
+  "ko": "타종(打鐘) 거북이",
+  "en": "Bell-Borne Geochelone",
+  "note": ""
+ },
+ {
+  "zh": "辉萤军势",
+  "ko": "반디의 군세(軍勢)",
+  "en": "Lampylumen Myriad",
+  "note": ""
+ },
+ {
+  "zh": "燎照之骑",
+  "ko": "지옥(地獄)불 기사(騎士)",
+  "en": "Inferno Rider",
+  "note": ""
+ },
+ {
+  "zh": "飞廉之猩",
+  "ko": "폭주(暴走)의 고릴라",
+  "en": "Feilian Beringal",
+  "note": ""
+ },
+ {
+  "zh": "云闪之鳞",
+  "ko": "뇌운(雷雲)의 비늘",
+  "en": "Thundering Mephis",
+  "note": ""
+ },
+ {
+  "zh": "朔雷之鳞",
+  "ko": "천둥의 비늘",
+  "en": "Tempest Mephis",
+  "note": ""
+ },
+ {
+  "zh": "哀声鸷",
+  "ko": "애곡(哀哭)하는 아익스",
+  "en": "Mourning Aix",
+  "note": ""
+ },
+ {
+  "zh": "无常凶鹭",
+  "ko": "음험한(陰險) 백로(白鷺)",
+  "en": "Impermanence Heron",
+  "note": ""
+ },
+ {
+  "zh": "聚械机偶",
+  "ko": "조립식(組立式) 로봇",
+  "en": "Mech Abomination",
+  "note": ""
+ },
+ {
+  "zh": "无归的谬误",
+  "ko": "돌아갈 곳이 없는 오류(誤謬)",
+  "en": "Fallacy of No Return",
+  "note": ""
+ },
+ {
+  "zh": "罗蕾莱",
+  "ko": "로렐라이",
+  "en": "Lorelei",
+  "note": ""
+ },
+ {
+  "zh": "赫卡忒",
+  "ko": "헤카테",
+  "en": "Hecate",
+  "note": ""
+ },
+ {
+  "zh": "异构武装",
+  "ko": "이성(異性) 무장(武裝)",
+  "en": "Sentry Construct",
+  "note": "韩语名称在游戏内即标注为“이성(異性) 무장”。"
+ },
+ {
+  "zh": "叹息古龙",
+  "ko": "탄식(歎息)의 고룡(古龍)",
+  "en": "Dragon of Dirge",
+  "note": ""
+ },
+ {
+  "zh": "芙露德莉斯",
+  "ko": "플뢰르 드 리스",
+  "en": "Fleurdelys",
+  "note": ""
+ },
+ {
+  "zh": "凯尔匹",
+  "ko": "켈피",
+  "en": "Kelpie",
+  "note": ""
+ },
+ {
+  "zh": "荣耀狮像",
+  "ko": "영광(榮光)의 사자(獅子)",
+  "en": "Lioness of Glory",
+  "note": ""
+ },
+ {
+  "zh": "芬莱克",
+  "ko": "펜리코",
+  "en": "Fenrico",
+  "note": ""
+ },
+ {
+  "zh": "海之女",
+  "ko": "바다의 여인(女人)",
+  "en": "Lady of the Sea",
+  "note": ""
+ },
+ {
+  "zh": "伪作的神王",
+  "ko": "거짓의 신왕(神王)",
+  "en": "The False Sovereign",
+  "note": ""
+ },
+ {
+  "zh": "利维亚坦",
+  "ko": "레비아탄",
+  "en": "Leviathan",
+  "note": ""
+ },
+ {
+  "zh": "海维夏",
+  "ko": "하이와티아",
+  "en": "Hyvatia",
+  "note": ""
+ },
+ {
+  "zh": "炉芯机骸",
+  "ko": "리액터 허스크",
+  "en": "Reactor Husk",
+  "note": ""
+ }
+]

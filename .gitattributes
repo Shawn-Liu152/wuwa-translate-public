@@ -1,0 +1,7 @@
+# SQLite 数据库与 SRT 产物一律按二进制处理，禁止行尾转换
+*.db binary
+*.db.bak binary
+*.srt binary
+*.mp4 binary
+*.mp3 binary
+*.wav binary

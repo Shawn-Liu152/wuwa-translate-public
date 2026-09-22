@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 本地 Whisper 运行依赖（DLL 等大文件）
+.runtime_deps/
+
+# pytest
+.pytest_cache/
+.pytest_cache_*
+
+# 真实任务素材：视频/音频大文件、Cookie、临时任务文件
+download/*
+!download/.gitkeep
+
+# 复数目录同样是真实素材：downloads/ 存 Web 端下载的视频/音频/完整字幕，
+# results/ 存视觉验证截图（含真实任务卡内容），一律不入库
+downloads/
+results/
+
+# tools/visual_verify.mjs 每次运行都会把一次性启动令牌写到仓库根，属本机凭据
+.visual_token.txt
+
+# 本地真实字幕候选包含完整视频文本，只供当前机器人工复核
+reports/realflow_*/benchmark_candidates_*.json
+reports/realflow_*/benchmark_review_*.csv
+reports/realflow_*/human_review_batch_*.json
+reports/realflow_*/human_review_batch_*.csv
+reports/realflow_*/human_review_batch_*.audit.jsonl
+reports/realflow_*/human_review_metrics_*.json
+reports/realflow_*/human_review_metrics_*.md
+
+# 日志与临时
+*.log
+*.tmp
+*.bak
+*.bak-*
+*.swp
+
+# 密钥（防止未来误提交）
+.env
+.env.*
+youtube_cookies.txt
+
+# 操作系统
+Thumbs.db
+.DS_Store
+
+# 归档与缓存（不纳入版本控制的内容）
+download/archive/
+output/historical/
+*.pyc
+.uv-cache/
+.runtime/
+
+# Public repository: never add private state or validation artifacts
+/reports/
+/output/
+/archive/
+/benchmarks/
+/.pytest-public*/

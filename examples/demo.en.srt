@@ -1,0 +1,40 @@
+1
+00:00:00,000 --> 00:00:03,000
+Welcome to this short subtitle workflow demo.
+
+2
+00:00:03,200 --> 00:00:06,400
+Today we are testing a local English-to-Chinese translation.
+
+3
+00:00:06,600 --> 00:00:09,800
+The fictional host is named Mira Vale.
+
+4
+00:00:10,000 --> 00:00:13,200
+She has never visited Lumen Harbor before.
+
+5
+00:00:13,400 --> 00:00:16,600
+Please keep the number 42 unchanged.
+
+6
+00:00:16,800 --> 00:00:20,000
+If a sentence is unclear, mark it for review.
+
+7
+00:00:20,200 --> 00:00:23,400
+The second subtitle source helps correct recognition errors.
+
+8
+00:00:23,600 --> 00:00:26,800
+No copyrighted dialogue or media is included here.
+
+9
+00:00:27,000 --> 00:00:30,200
+After translation, download the reviewed subtitle file.
+
+10
+00:00:30,400 --> 00:00:33,600
+Thank you for trying the demo.
+

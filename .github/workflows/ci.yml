@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt -r web_requirements.txt
+      - name: Static checks
+        shell: pwsh
+        run: |
+          node --check web/static/app.js
+          node --check web/static/pet.js
+          node --check web/static/workbench-core.js
+          python -m compileall -q pipeline web tools
+          git diff --check
+      - name: Full test suite
+        shell: pwsh
+        run: |
+          $env:PYTHONPATH = $null
+          python -m pytest -q -p no:cacheprovider --basetemp="$env:GITHUB_WORKSPACE\.pytest-public"
