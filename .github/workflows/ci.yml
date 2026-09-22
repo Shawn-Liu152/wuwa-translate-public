@@ -37,4 +37,9 @@ jobs:
         shell: pwsh
         run: |
           $env:PYTHONPATH = $null
+          $env:PYTHONIOENCODING = "utf-8"
+          $env:PYTHONUTF8 = "1"
+          $env:TEMP = "$env:GITHUB_WORKSPACE\.pytest-public-upload"
+          $env:TMP = $env:TEMP
+          New-Item -ItemType Directory -Path $env:TEMP -Force | Out-Null
           python -m pytest -q -p no:cacheprovider --basetemp="$env:GITHUB_WORKSPACE\.pytest-public"
