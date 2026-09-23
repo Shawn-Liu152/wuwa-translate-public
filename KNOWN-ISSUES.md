@@ -1,8 +1,8 @@
-# Known compatibility limits
+# Compatibility status
 
-The release CI uses UTF-8 output and keeps system temporary uploads and pytest data on the same workspace volume. Passing CI does not cover the following configurations.
+The two limits documented for the `af299e2` snapshot are addressed in this revision. Both have deterministic regression tests.
 
-- **Major — Uploads across volumes:** if the system TEMP directory and task storage are on different Windows drives, an SRT upload can fail with WinError 17. `web/app.py:1090` creates a system temporary file and `web/jobs.py:1564` uses `Path.replace`, which cannot move across volumes. Until fixed, run with TEMP/TMP on the task-storage volume. Recommended fix: destination-local staging with cleanup and atomic replacement; add a regression simulating a cross-device rename error.
-- **Minor — Non-UTF-8 CLI output:** a dry-run can write its SRT but fail when printing a Chinese report under a legacy Windows code page. `pipeline/main.py:1412` prints the profiler report without ensuring a supported output encoding. Use PYTHONIOENCODING=utf-8 and PYTHONUTF8=1 for CLI runs. Add a subprocess regression using a legacy encoding before changing CLI output handling.
+- **Uploads across volumes:** Uploads may start in system TEMP on a different Windows drive from task storage. Direct task creation now copies each file to a temporary path inside the task workspace, atomically replaces the destination on that volume, and cleans temporary uploads. `tests/test_web_jobs.py` simulates a cross-device rename failure.
+- **Non-UTF-8 CLI output:** A dry-run previously wrote its SRT and then failed printing the Chinese profiler report under a legacy code page. Characters unsupported by stdout's encoding now use backslash escapes; UTF-8 output remains unchanged. `tests/test_cli_encoding.py` runs the CLI subprocess with `cp1252:strict`.
 
-These were reproduced in Windows GitHub CI during publication. They remain unresolved product limitations; no translation, ASR, download or subtitle algorithms were changed to make CI pass. Cross-volume uploads are the next recommended fix.
+Windows CI now uses the runner's normal TEMP/TMP location. The suite uses UTF-8 for ordinary output, while the CLI subprocess regression explicitly exercises `cp1252:strict`. Local isolated validation: 1123 passed, 6 skipped; the skips require private data excluded from this repository. A physical C:/D: upload check was unavailable because D: denied creation of a synthetic test directory.

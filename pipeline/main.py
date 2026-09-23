@@ -1409,7 +1409,11 @@ def run_pipeline(input_path: str,
     # ============================================================
     if Config.ENABLE_PROFILER:
         log.info("")
-        print(profiler.report())
+        stdout_encoding = getattr(sys.stdout, "encoding", None) or "utf-8"
+        report = profiler.report().encode(
+            stdout_encoding, errors="backslashreplace"
+        ).decode(stdout_encoding)
+        print(report)
 
     # ============================================================
     # 完成

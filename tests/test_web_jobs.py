@@ -1,3 +1,4 @@
+import errno
 import hashlib
 import json
 import logging
@@ -87,6 +88,34 @@ def test_direct_create_stops_at_ready_for_translation(manager, tmp_path, monkeyp
     assert job["options"]["model"] == ""
     assert job["options"]["api_key_configured"] is False
     assert submissions == []
+
+
+def test_direct_create_accepts_uploads_from_another_volume(manager, tmp_path, monkeypatch):
+    upload_dir = tmp_path / "system-temp"
+    upload_dir.mkdir()
+    srt = b"1\n00:00:00,000 --> 00:00:01,000\nHello\n"
+    capcut = upload_dir / "capcut.srt"
+    whisper = upload_dir / "whisper.srt"
+    capcut.write_bytes(srt)
+    whisper.write_bytes(srt)
+    original_replace = Path.replace
+
+    def cross_volume_replace(source, destination):
+        if source.parent == upload_dir:
+            raise OSError(errno.EXDEV, "Invalid cross-device link")
+        return original_replace(source, destination)
+
+    monkeypatch.setattr(Path, "replace", cross_volume_replace)
+
+    job = manager.create({"capcut_en": capcut, "whisper_en": whisper})
+
+    workspace = tmp_path / "jobs" / job["id"]
+    assert (workspace / "capcut.en.srt").read_bytes() == srt
+    assert (workspace / "whisper.en.srt").read_bytes() == srt
+    assert not capcut.exists() and not whisper.exists()
+    assert sorted(path.name for path in workspace.iterdir()) == [
+        "capcut.en.srt", "job.json", "whisper.en.srt",
+    ]
 
 
 def test_job_change_snapshot_is_minimal_and_changes_with_progress(

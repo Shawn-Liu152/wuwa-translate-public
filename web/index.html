@@ -7,7 +7,7 @@
   <meta name="description" content="本地视频字幕翻译、术语管理与风险审校工作台">
   <title>视频字幕翻译工作台</title>
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/static/app.css?v=20260921-list-css22">
+  <link rel="stylesheet" href="/static/app.css?v=20260923-cli-encoding-css24">
   <link rel="stylesheet" href="/static/pet.css?v=20260729-pet-fit1">
 </head>
 <body class="workbench-active empty-state">
@@ -768,9 +768,9 @@
         <div class="faq-content" id="faq-list">
           <section class="faq-group" id="faq-download">
             <div class="faq-group-title"><span>01</span><h3>下载与 Cookie</h3></div>
-            <details class="faq-item" data-faq-keywords="新建 创建任务 抽屉 弹窗 上传 srt youtube url">
+            <details class="faq-item" data-faq-keywords="新建 创建任务 抽屉 弹窗 上传 srt youtube url WinError 17 跨盘">
               <summary><span>Q</span>创建任务的表单在哪里？</summary>
-              <div><p><b>现象：</b>工作台不再一直显示创建任务的长表单。<br><b>原因：</b>创建入口已集中到弹窗，并会按素材来源只显示当前需要的字段。<br><b>操作步骤：</b>点击顶部或空状态中的“新建翻译任务”，先选择“YouTube / URL”或“上传已有字幕”，再填写对应字段；关闭后再次打开，当前页面内已填写的内容仍会保留。</p><button type="button" data-help-action="new-task">打开新建任务</button></div>
+              <div><p><b>现象：</b>工作台不再一直显示创建任务的长表单。<br><b>原因：</b>创建入口已集中到弹窗，并会按素材来源只显示当前需要的字段。<br><b>操作步骤：</b>点击顶部或空状态中的“新建翻译任务”，先选择“YouTube / URL”或“上传已有字幕”，再填写对应字段；关闭后再次打开，当前页面内已填写的内容仍会保留。<br><b>跨盘上传失败：</b>旧版在系统临时目录与任务目录位于不同盘符时可能出现 WinError 17；更新并重启工作台后重新上传。新版会先在任务目录暂存，再原子写入，无需修改系统 TEMP。</p><button type="button" data-help-action="new-task">打开新建任务</button></div>
             </details>
             <details class="faq-item" data-faq-keywords="接口地址 endpoint api 模型 配置 保存 恢复">
               <summary><span>Q</span>为什么首次打开时模型和接口都是空的？</summary>
@@ -836,9 +836,9 @@
               <summary><span>Q</span>只下载了字幕的任务，之后还能补充剪映/Whisper 第二源吗？</summary>
               <div><p><b>现象：</b>创建任务时没有下载视频（无法本地 Whisper），质量评估提示建议补充第二源证据。<br><b>原因：</b>自适应与 Whisper 策略需要视频文件，只下字幕的任务只能用 YouTube 字幕作证据；但任务完成或失败后随时可以补上传剪映 SRT。<br><b>操作步骤：</b>打开该任务的详情页，展开“补充剪映字幕（可选第二源证据）”，上传剪映导出的源语言 SRT；任务会回到“待翻译”状态，重新点“开始全量翻译”即可用新证据重翻（证据改变会重翻全部批次，不属于断点续跑）。</p></div>
             </details>
-            <details class="faq-item" data-faq-keywords="便携版 ffmpeg whisper 缺少 视频下载 上传 srt youtube 字幕">
+            <details class="faq-item" data-faq-keywords="便携版 ffmpeg whisper 缺少 视频下载 上传 srt youtube 字幕 旧代码页 UnicodeEncodeError CLI">
               <summary><span>Q</span>便携版提示没有 FFmpeg 或 Whisper，还能翻译吗？</summary>
-              <div><p><b>现象：</b>状态栏提示缺少 FFmpeg 或本地 Whisper，视频下载和自适应识别选项会自动停用。<br><b>原因：</b>基础便携版只内置安全运行翻译与获取 YouTube 字幕所需的组件，不捆绑体积很大的视频转码器和 GPU 识别模型。封面会保留 YouTube 原始图片格式，VTT 字幕由工作台在本机转换为 SRT，不需要 FFmpeg。<br><b>操作步骤：</b>可以直接上传已有 SRT，或选择有对应源语言字幕的 YouTube 视频继续翻译。需要下载视频或生成“黑框白字2”带字幕视频时，请自行安装带 libass 的 FFmpeg 和中文字体并重启工作台；需要无字幕视频识别时，再安装可选 Whisper 环境。API Key 的安全保存方式不受这些可选组件影响。审校页显示“真正待处理 0”并已生成已审校字幕后，自动处理完成的条目不会再次拦截视频生成。最后一条必审项保存后显示“审校已完成”，点击“生成交付文件”即可生成黑框白字2 MP4；同一区域可下载已审校 SRT、查看进度、取消或重试，并打开当前任务目录。</p></div>
+              <div><p><b>现象：</b>状态栏提示缺少 FFmpeg 或本地 Whisper，视频下载和自适应识别选项会自动停用。<br><b>原因：</b>基础便携版只内置安全运行翻译与获取 YouTube 字幕所需的组件，不捆绑体积很大的视频转码器和 GPU 识别模型。封面会保留 YouTube 原始图片格式，VTT 字幕由工作台在本机转换为 SRT，不需要 FFmpeg。<br><b>操作步骤：</b>可以直接上传已有 SRT，或选择有对应源语言字幕的 YouTube 视频继续翻译。需要下载视频或生成“黑框白字2”带字幕视频时，请自行安装带 libass 的 FFmpeg 和中文字体并重启工作台；需要无字幕视频识别时，再安装可选 Whisper 环境。API Key 的安全保存方式不受这些可选组件影响。审校页显示“真正待处理 0”并已生成已审校字幕后，自动处理完成的条目不会再次拦截视频生成。最后一条必审项保存后显示“审校已完成”，点击“生成交付文件”即可生成黑框白字2 MP4；同一区域可下载已审校 SRT、查看进度、取消或重试，并打开当前任务目录。<br><b>命令行试运行异常：</b>旧版在非 UTF-8 代码页打印中文性能报告时可能出现 UnicodeEncodeError，SRT 虽已写出但进程报错；更新后重跑即可。新版会将当前代码页无法表示的字符转义输出，无需修改字幕文件。</p></div>
             </details>
             <details class="faq-item" data-faq-keywords="日语 英语 源语言 不匹配 上传 srt 校验">
               <summary><span>Q</span>日语或韩语任务提示源语言不匹配，或为什么音乐提示没有进入审核？</summary>
@@ -1082,6 +1082,6 @@
   <script src="/static/pet.js?v=20260729-pets4"></script>
   <script src="/static/workbench-formatters.js?v=20260911-format1"></script>
   <script src="/static/workbench-core.js?v=20260921-core4"></script>
-  <script src="/static/app.js?v=20260921-list-v29"></script>
+  <script src="/static/app.js?v=20260923-cli-encoding-v31"></script>
 </body>
 </html>

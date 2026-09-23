@@ -10,6 +10,7 @@ import re
 import shutil
 import sqlite3
 import sys
+import tempfile
 import threading
 import time
 import uuid
@@ -1561,7 +1562,17 @@ class JobManager:
                         suffix = source.suffix.lower()[:16]
                         filename = f"source{suffix}" if suffix else "source.media"
                     destination = workspace / filename
-                    source.replace(destination)
+                    fd, staged_name = tempfile.mkstemp(
+                        prefix=f".{filename}.", suffix=".tmp", dir=workspace
+                    )
+                    os.close(fd)
+                    staged = Path(staged_name)
+                    try:
+                        shutil.copyfile(source, staged)
+                        os.replace(staged, destination)
+                    finally:
+                        staged.unlink(missing_ok=True)
+                    source.unlink()
                     copied[name] = str(destination)
                     artifacts[filename] = str(destination)
                 copied.update(_source_inputs(
