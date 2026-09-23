@@ -57,5 +57,5 @@ test('batch retry asks for a saved key before confirmation or API mutation', asy
 
   assert.deepEqual(calls.map(call => call.type), ['toast']);
   assert.equal(calls[0].kind, 'warning');
-  assert.match(calls[0].message, /保存 API Key/);
+  assert.match(calls[0].message, /配置 API Key/);
 });

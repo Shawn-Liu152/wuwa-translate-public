@@ -49,6 +49,38 @@ function harness() {
   return context;
 }
 
+test('default risk view lists only unfinished required human review', () => {
+  const c = harness();
+  c.install('currentRiskFilter');
+  c.install('applyRiskFilter');
+  const items = [
+    {key: 'required', review_required: true, state: 'review'},
+    {key: 'advisory-pending', review_required: false, state: 'pending'},
+    {key: 'done', review_required: true, state: 'verified'},
+  ];
+  assert.deepEqual(Array.from(c.applyRiskFilter(items), item => item.key), ['required']);
+  c.elements.get('#risk-filter').value = '';
+  assert.equal(c.applyRiskFilter(items).length, 3);
+});
+
+test('subtitle preview displays an excerpt and reuses the same response', async () => {
+  const c = harness();
+  c.install('loadSubtitlePreview');
+  c.subtitlePreviewCache = new Map();
+  let calls = 0;
+  c.api = async () => {
+    calls++;
+    return {total: 10, cues: [{start: '00:00:01,000', text: '你好'}]};
+  };
+  const slot = {dataset: {}, isConnected: true, innerHTML: ''};
+  const job = {id: 'review-A', updated_at: '2026-09-23T00:00:00Z'};
+  await c.loadSubtitlePreview(slot, job, 'final.zh.srt');
+  assert.match(slot.innerHTML, /你好/);
+  assert.match(slot.innerHTML, /预览前 1 \/ 10 条/);
+  await c.loadSubtitlePreview(slot, job, 'final.zh.srt');
+  assert.equal(calls, 1);
+});
+
 test('last saved required risk shows completion and current-task delivery CTA', async () => {
   const c = harness();
   c.selectedJob.review_pending_count = 1;

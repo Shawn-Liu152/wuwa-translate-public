@@ -256,14 +256,21 @@ class UserSettingsStore:
             self._write_non_secret(settings)
 
             secret = str(updates.get("api_key") or "").strip()
+            storage = updates.get("api_key_storage", "secure")
+            if storage not in {"secure", "session"}:
+                raise ValueError("API Key 保存方式无效")
             if secret:
-                try:
-                    self.credential_store.write(secret)
-                    self._session_api_key = ""
-                    self._credential_warning = ""
-                except OSError:
+                if storage == "session":
                     self._session_api_key = secret
-                    self._credential_warning = SESSION_ONLY_WARNING
+                    self._credential_warning = ""
+                else:
+                    try:
+                        self.credential_store.write(secret)
+                        self._session_api_key = ""
+                        self._credential_warning = ""
+                    except OSError:
+                        self._session_api_key = secret
+                        self._credential_warning = SESSION_ONLY_WARNING
             return self.get_public_settings()
 
     def delete_api_key(self) -> dict[str, Any]:

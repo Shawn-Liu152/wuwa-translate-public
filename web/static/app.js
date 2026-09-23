@@ -234,6 +234,7 @@ const USER_SETTINGS_DEFAULTS = {
   credential_warning: "",
 };
 let userSettings = { ...USER_SETTINGS_DEFAULTS };
+const subtitlePreviewCache = new Map();
 let subtitleBurnCapability = {
   available: false,
   error_code: 'checking',
@@ -865,7 +866,7 @@ function setCredentialStatus() {
   const persistence = userSettings.api_key_persistence;
   const text = configured
     ? (persistence === "session" ? "API Key 仅本次会话有效" : "API Key 已安全保存")
-    : "尚未保存 API Key";
+    : "尚未配置 API Key";
   ["#url-api-key-status", "#settings-api-key-status"].forEach(selector => {
     const status = $(selector);
     if (status) status.textContent = userSettings.credential_warning || text;
@@ -878,6 +879,8 @@ function applyUserSettingsToForms() {
       .forEach(key => setFormValue(form, key, userSettings[key]));
     const keyInput = form.querySelector('[name="api_key"]');
     if (keyInput) keyInput.value = "";
+    const storage = form.querySelector('[name="api_key_storage"]');
+    if (storage) storage.value = userSettings.api_key_persistence === "secure" ? "secure" : "session";
   });
   setCredentialStatus();
 }
@@ -900,7 +903,10 @@ function collectUserSettings(form) {
   const localWhisper = form.querySelector('[name="local_whisper"]');
   if (localWhisper) payload.local_whisper = Boolean(localWhisper.checked);
   const keyInput = form.querySelector('[name="api_key"]');
-  if (keyInput?.value.trim()) payload.api_key = keyInput.value.trim();
+  if (keyInput?.value.trim()) {
+    payload.api_key = keyInput.value.trim();
+    payload.api_key_storage = form.querySelector('[name="api_key_storage"]')?.value || "session";
+  }
   return payload;
 }
 
@@ -1066,13 +1072,18 @@ function renderTranslationConfigRepair(job) {
   const model = options.model || userSettings.model || "";
   const baseUrl = options.base_url || userSettings.base_url || "";
   const keyStatus = userSettings.api_key_configured
-    ? "API Key 已安全保存；留空继续使用"
-    : "请输入并安全保存 API Key";
+    ? "留空继续使用当前 API Key"
+    : "请输入 API Key";
+  const keyStorage = userSettings.api_key_persistence === "secure" ? "secure" : "session";
   return `<form class="translation-config-repair" id="translation-config-repair-form">
     <h4>${job.error_code === "authentication_error" ? "更新失效的 API 配置" : "补齐 API 配置"}</h4>
     <label>模型名称<input required name="model" value="${escapeHtml(model)}" autocomplete="off" spellcheck="false"></label>
     <label>API Base URL<input required name="base_url" type="url" value="${escapeHtml(baseUrl)}" autocomplete="off" spellcheck="false"></label>
     <label>API Key<input name="api_key" type="password" autocomplete="off" spellcheck="false"><small>${escapeHtml(keyStatus)}</small></label>
+    <label>新 Key 的保存方式<select name="api_key_storage">
+      <option value="session" ${keyStorage === "session" ? "selected" : ""}>仅本次程序会话</option>
+      <option value="secure" ${keyStorage === "secure" ? "selected" : ""}>安全保存到此 Windows 用户</option>
+    </select></label>
   </form>`;
 }
 
@@ -1638,7 +1649,7 @@ window.batchJobAction = async function batchJobAction(action, ids) {
       return;
     }
     if (eligibility.needsKey && !userSettings.api_key_configured) {
-      showToast('请先到“设置与帮助”保存 API Key，再批量重试', 'warning');
+      showToast('请先到“设置与帮助”配置 API Key，再批量重试', 'warning');
       return;
     }
     const confirmed = await confirmAction({
@@ -2255,6 +2266,7 @@ function buildDetailContext(job) {
     logs,
     artifactNames,
     overviewLinkedArtifact,
+    previewArtifact: overviewLinkedArtifact,
     deliveryArtifacts,
     technicalArtifactNames,
     technicalArtifacts,
@@ -2324,9 +2336,42 @@ function bindFilesTabInteractions(root) {
   root.querySelector('.organize-technical')?.addEventListener('click', organizeSelectedJob);
 }
 
+async function loadSubtitlePreview(slot, job, name) {
+  if (!slot || !name) return;
+  const key = `${job.id}/${name}/${job.updated_at || ''}`;
+  slot.dataset.previewKey = key;
+  let preview = subtitlePreviewCache.get(key);
+  if (!preview) {
+    try {
+      preview = await api(`/api/jobs/${job.id}/subtitle-preview/${encodeURIComponent(name)}`);
+      subtitlePreviewCache.set(key, preview);
+      if (subtitlePreviewCache.size > 30) subtitlePreviewCache.delete(subtitlePreviewCache.keys().next().value);
+    } catch (error) {
+      if (slot.isConnected && slot.dataset.previewKey === key) {
+        slot.innerHTML = '<p class="subtitle-preview-note">预览暂不可用；可下载完整 SRT 字幕。</p>';
+      }
+      return;
+    }
+  }
+  if (!slot.isConnected || slot.dataset.previewKey !== key) return;
+  const cues = Array.isArray(preview.cues) ? preview.cues : [];
+  slot.innerHTML = cues.length
+    ? `<ol class="subtitle-preview-list">${cues.map(cue => `<li><time>${escapeHtml(cue.start)}</time><span>${escapeHtml(cue.text).replace(/\n/g, '<br>')}</span></li>`).join('')}</ol>
+       <p class="subtitle-preview-note">预览前 ${cues.length} / ${metricNumber(preview.total)} 条；下载获得完整字幕。</p>`
+    : '<p class="subtitle-preview-note">字幕暂无可预览的台词；可下载完整文件查看。</p>';
+}
+
 function renderOverviewTab(context) {
   const { job, presentation } = context;
   const panel = $('#detail-panel-overview');
+  const showCompletedDelivery = job.status === 'completed' && !context.completedDryRun;
+  const deliveryCard = `<section class="overview-download ${showCompletedDelivery ? 'completed-delivery' : ''}" aria-labelledby="overview-download-title">
+    <div class="section-title"><h3 id="overview-download-title">${showCompletedDelivery ? '中文字幕预览与下载' : '最终交付'}</h3><small>${unresolvedReviewRequiredCount(job) > 0 ? '自动版预览 · 尚未完成审校' : context.previewArtifact === 'final.reviewed.zh.srt' ? '已审校版本' : context.previewArtifact ? '自动生成版本' : '等待字幕'}</small></div>
+    ${context.primaryDownload}
+    ${context.previewArtifact ? `<div class="subtitle-preview" data-subtitle-preview><p class="subtitle-preview-note">正在读取译文预览…</p></div>` : ''}
+    ${context.burnedVideoExport}
+    ${job.status === 'completed' ? `<button type="button" class="open-job-folder" data-job="${escapeHtml(job.id)}">打开任务目录</button>` : ''}
+  </section>`;
   panel.innerHTML = `<div class="detail-heading">
     <div>
       <p class="eyebrow task-kicker">TASK / ${escapeHtml(jobTitle(job))} / ${escapeHtml(job.id)}</p>
@@ -2335,6 +2380,7 @@ function renderOverviewTab(context) {
     </div>
     ${displayStatus(job.status)}
   </div>
+  ${showCompletedDelivery ? deliveryCard : ''}
   ${context.workflow}
   <section class="overview-phoebe-status" aria-label="菲比任务状态">
     <span data-overview-phoebe-icon aria-hidden="true">${escapeHtml(presentation.icon)}</span>
@@ -2344,13 +2390,11 @@ function renderOverviewTab(context) {
   ${context.action}
   ${context.jobActions}
   <p class="form-note" id="job-action-note" aria-live="polite"></p>
-  <section class="overview-download" aria-labelledby="overview-download-title">
-    <div class="section-title"><h3 id="overview-download-title">最终交付</h3><small>主字幕下载</small></div>
-    ${context.primaryDownload}
-    ${context.burnedVideoExport}
-    ${job.status === 'completed' ? `<button type="button" class="open-job-folder" data-job="${escapeHtml(job.id)}">打开任务目录</button>` : ''}
-  </section>`;
+  ${showCompletedDelivery ? '' : deliveryCard}`;
   bindOverviewTabInteractions(panel);
+  if (showCompletedDelivery) {
+    loadSubtitlePreview(panel.querySelector('[data-subtitle-preview]'), job, context.previewArtifact);
+  }
 }
 
 function renderPipelineTab(context) {
@@ -2405,13 +2449,14 @@ function renderFilesTab(context) {
 /* FE-P0-02：筛选与分页只有一套状态（#risk-filter + riskPage），
    详情 Risk 标签与独立 Review 视图共用；切换表面不再丢上下文。 */
 function currentRiskFilter() {
-  return $('#risk-filter')?.value || 'unresolved';
+  return $('#risk-filter')?.value ?? 'unresolved';
 }
 
 function applyRiskFilter(items) {
   const filter = currentRiskFilter();
   if (filter === 'unresolved') {
-    return items.filter(item => ['pending', 'review', 'failed'].includes(item.state));
+    return items.filter(item => item.review_required
+      && ['pending', 'review', 'failed'].includes(item.state));
   }
   if (filter) return items.filter(item => item.state === filter);
   return items;
@@ -2510,17 +2555,17 @@ function renderDetailRiskTab({ error = '' } = {}) {
   const option = (value, label) => `<option value="${value}" ${currentRiskFilter() === value ? 'selected' : ''}>${label}</option>`;
   const cards = visible.length
     ? visible.map(item => renderRiskCardMarkup(item, 'detail-risk')).join('')
-    : `<div class="empty"><span class="empty-mark" aria-hidden="true">✓</span><b>${currentRiskFilter() === 'unresolved' ? '没有待处理风险' : '没有符合筛选条件的风险项'}</b><small>${currentRiskFilter() === 'unresolved' ? '可以继续检查交付文件' : '尝试切换其他状态'}</small></div>`;
+    : `<div class="empty"><span class="empty-mark" aria-hidden="true">✓</span><b>${currentRiskFilter() === 'unresolved' ? '没有必须人工处理的风险' : '没有符合筛选条件的风险项'}</b><small>${currentRiskFilter() === 'unresolved' ? '可以继续检查交付文件' : '尝试切换其他状态'}</small></div>`;
 
   panel.innerHTML = `<div class="detail-risk-heading"><div><p class="eyebrow">RISK QUEUE</p><h2>风险审校</h2></div><small>与独立 Review 视图同步</small></div>
     <div class="detail-risk-toolbar">
       <label>风险状态<select data-detail-risk-filter autocomplete="off">
-        ${option('unresolved', '待我处理')}${option('review', '待人工复核')}${option('pending', '待处理')}${option('resolved', '已修正')}${option('verified', '已确认')}${option('auto_resolved', '自动处理完成')}${option('advisory', '仅供参考')}${option('', '全部风险')}
+        ${option('unresolved', '需要我处理')}${option('review', '待人工复核')}${option('pending', '待处理')}${option('resolved', '已修正')}${option('verified', '已确认')}${option('auto_resolved', '自动处理完成')}${option('advisory', '仅供参考')}${option('', '全部风险')}
       </select></label>
       <div><button type="button" class="icon-button" data-detail-risk-refresh aria-label="刷新风险">↻</button> <button type="button" data-open-review-view>打开独立审校视图</button></div>
     </div>
     <div class="detail-risk-summary" aria-label="风险摘要">
-      <div><span>真正待处理</span><b>${metricNumber(unresolved)}</b></div><div><span>已自动处理</span><b>${metricNumber(automatic)}</b></div>
+      <div><span>需要你处理</span><b>${metricNumber(unresolved)}</b></div><div><span>已自动处理</span><b>${metricNumber(automatic)}</b></div>
       <div><span>仅供参考</span><b>${metricNumber(advisory)}</b></div><div><span>已人工完成</span><b>${metricNumber(humanDone)}</b></div>
     </div>
     <div class="risk-list detail-risk-list" data-detail-risk-list aria-live="polite">${cards}</div>
@@ -2903,8 +2948,8 @@ function renderRiskPage() {
   $('#bulk-verify').disabled = !riskItems.length;
   if (!visible.length) {
     target.innerHTML = `<div class="empty"><span class="empty-mark" aria-hidden="true">✓</span>
-      <b>${filter === 'unresolved' ? '没有待处理风险' : '没有符合筛选条件的风险项'}</b>
-      <small>${filter === 'unresolved' ? '可以下载已审校中文字幕' : '尝试切换其他状态'}</small></div>`;
+      <b>${filter === 'unresolved' ? '没有必须人工处理的风险' : '没有符合筛选条件的风险项'}</b>
+      <small>${filter === 'unresolved' ? '可以下载可交付中文字幕；其他状态可在筛选中查看' : '尝试切换其他状态'}</small></div>`;
     $('#risk-pagination').hidden = true;
     return;
   }
@@ -2914,7 +2959,7 @@ function renderRiskPage() {
   $('#risk-next').disabled = riskPage >= pageCount;
   $('#risk-pagination').hidden = pageCount <= 1;
   syncUrl({
-    riskFilter: $('#risk-filter')?.value || 'unresolved',
+    riskFilter: currentRiskFilter(),
     page: riskPage,
   });
   bindRiskCards(target);
@@ -3020,7 +3065,7 @@ async function loadRisks({ preservePage = false } = {}) {
       ['resolved', 'verified'].includes(item.state)
     ).length;
     $('#risk-summary').innerHTML = `
-      <div class="${unresolvedRequired ? 'attention' : 'clear'}"><span>真正待处理</span><b>${metricNumber(unresolvedRequired)}</b></div>
+      <div class="${unresolvedRequired ? 'attention' : 'clear'}"><span>需要你处理</span><b>${metricNumber(unresolvedRequired)}</b></div>
       <div><span>已自动处理</span><b>${metricNumber(automatic)}</b></div>
       <div><span>仅供参考（不阻塞）</span><b>${metricNumber(advisory)}</b></div>
       <div><span>已人工完成</span><b>${metricNumber(humanDone)}</b></div>`;
@@ -3039,7 +3084,7 @@ async function loadRisks({ preservePage = false } = {}) {
     renderRiskPage();
     renderDetailRiskTab();
     syncUrl({
-      riskFilter: $('#risk-filter')?.value || 'unresolved',
+      riskFilter: currentRiskFilter(),
       page: riskPage,
     });
   } catch (error) {
@@ -3136,7 +3181,7 @@ $('#url-form').addEventListener('submit', async event => {
   note.textContent = '正在创建下载任务…';
   const enteredKey = String(event.target.elements.api_key?.value || '').trim();
   if (!userSettings.api_key_configured && !enteredKey) {
-    note.textContent = '请先输入并安全保存 API Key';
+    note.textContent = '请先输入 API Key，并选择保存方式';
     event.target.elements.api_key?.focus();
     setBusy(submit, false);
     return;

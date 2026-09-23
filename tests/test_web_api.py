@@ -401,6 +401,18 @@ def test_url_view_is_allowlisted_before_navigation_dom_lookup():
     assert 'document.querySelector(`.nav[data-view="${view}"]`)' not in app_script
 
 
+def test_three_ux_controls_keep_delivery_gate_and_quality_flow():
+    page = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
+    script = (WEB_ROOT / "static" / "app.js").read_text(encoding="utf-8")
+    assert page.count('name="api_key_storage"') == 2
+    assert "仅本次程序会话" in page
+    assert "安全保存到此 Windows 用户" in page
+    assert "中文字幕预览与下载" in script
+    assert "item.review_required" in script
+    assert "处理 ${metricNumber(unresolvedReviewCount)} 条必审风险" in script
+    assert "下载自动版字幕（尚未完成审校）" in script
+
+
 def test_api_key_uses_backend_secure_storage_without_browser_persistence():
     page = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
     app_script = (WEB_ROOT / "static" / "app.js").read_text(encoding="utf-8")
@@ -469,8 +481,8 @@ def test_workbench_blocks_primary_delivery_until_required_review_is_clear():
     page = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
     app_script = (WEB_ROOT / "static" / "app.js").read_text(encoding="utf-8")
 
-    assert "为什么自动字幕已生成，主按钮却要求先审校？" in page
-    assert "自动流程完成不等于可以安全交付" in page
+    assert "翻译完成后在哪里预览和下载中文字幕？" in page
+    assert "自动字幕还不能作为可交付版本" in page
     assert "处理必审风险" in app_script
     assert "下载自动版字幕（尚未完成审校）" in app_script
     assert "下载可交付中文字幕" in app_script
@@ -524,7 +536,7 @@ def test_workbench_preserves_visual_identity_without_template_motion():
     page = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
     styles = (WEB_ROOT / "static" / "app.css").read_text(encoding="utf-8")
 
-    assert "app.css?v=20260923-ui-fixes-css26" in page
+    assert "app.css?v=20260923-three-ux-css27" in page
     assert "--ease-authored: cubic-bezier(.16, 1, .3, 1)" in styles
     assert "animation: phoebe-float 7s ease-in-out infinite" in styles
     assert "animation: toast-in .22s var(--ease-authored)" in styles
@@ -535,7 +547,7 @@ def test_workbench_explains_context_memory_and_requires_explicit_reuse():
     page = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
     app_script = (WEB_ROOT / "static" / "app.js").read_text(encoding="utf-8")
 
-    assert "app.js?v=20260923-ui-fixes-v32" in page
+    assert "app.js?v=20260923-three-ux-v33" in page
     assert "生成交付文件" in page
     assert 'id="session-recovery"' in page
     assert '会话已失效' in page
@@ -706,7 +718,7 @@ def test_workbench_has_searchable_usage_and_faq_pages():
     assert "UnicodeEncodeError" in page
     assert "跨盘上传失败" in page
     assert "WinError 17" in page
-    assert "批量重试翻译任务前也需先保存 Key" in page
+    assert "仅本次程序会话" in page
     assert "当前清晰度不可用，已自动降级重试" in page
     assert "YouTube 会话不匹配，已改用匿名方式重试" in page
     assert "yt-dlp 合并异常，已改用 ffmpeg 本地合并" in page
@@ -1882,6 +1894,39 @@ def test_user_settings_api_persists_non_secrets_without_returning_key(api_client
     assert "workflow_mode" not in raw
 
 
+def test_session_api_key_is_not_persisted_by_settings_or_start(api_client):
+    client, manager, root = api_client
+    response = client.put("/api/user-settings", json={
+        "api_key": "session-secret", "api_key_storage": "session",
+        "base_url": "https://api.example.test/v1", "model": "test-model",
+    })
+    assert response.status_code == 200
+    assert response.json()["api_key_persistence"] == "session"
+    assert client.put("/api/user-settings", json={
+        "api_key": "x", "api_key_storage": "unknown",
+    }).status_code == 422
+    created = _create_ready_job(client)
+    started = client.post(f"/api/jobs/{created['id']}/start", data={})
+    assert started.status_code == 200
+    assert manager.secrets[created["id"]] == "session-secret"
+    assert "session-secret" not in (root.parent / "settings.json").read_text(encoding="utf-8")
+    assert "session-secret" not in (root / created["id"] / "job.json").read_text(encoding="utf-8")
+
+
+def test_start_form_can_use_session_key_without_secure_write(api_client):
+    client, manager, root = api_client
+    created = _create_ready_job(client)
+    response = client.post(f"/api/jobs/{created['id']}/start", data={
+        "model": "test-model", "base_url": "https://api.example.test/v1",
+        "api_key": "form-session-secret", "api_key_storage": "session",
+    })
+    assert response.status_code == 200
+    assert manager.secrets[created["id"]] == "form-session-secret"
+    public = client.get("/api/user-settings").json()
+    assert public["api_key_persistence"] == "session"
+    assert "form-session-secret" not in (root.parent / "settings.json").read_text(encoding="utf-8")
+
+
 def test_user_settings_api_deletes_saved_api_key(api_client):
     client, _, _ = api_client
     saved = client.put(
@@ -1895,6 +1940,27 @@ def test_user_settings_api_deletes_saved_api_key(api_client):
     assert deleted.status_code == 200
     assert deleted.json()["api_key_configured"] is False
     assert "saved-api-secret" not in deleted.text
+
+
+def test_subtitle_preview_returns_eight_cues_from_registered_final_srt(api_client):
+    client, manager, root = api_client
+    created = _create_ready_job(client)
+    job_id = created["id"]
+    path = root / job_id / "final.zh.srt"
+    path.write_text("\n\n".join(
+        f"{index}\n00:00:{index:02d},000 --> 00:00:{index+1:02d},000\n第{index}句"
+        for index in range(1, 11)
+    ), encoding="utf-8")
+    job = manager.get(job_id)
+    job["artifacts"]["final.zh.srt"] = "final.zh.srt"
+    manager._save(job)
+
+    response = client.get(f"/api/jobs/{job_id}/subtitle-preview/final.zh.srt")
+    assert response.status_code == 200
+    assert response.json()["total"] == 10
+    assert len(response.json()["cues"]) == 8
+    assert response.json()["cues"][0]["text"] == "第1句"
+    assert client.get(f"/api/jobs/{job_id}/subtitle-preview/job.json").status_code == 404
 
 
 def test_url_creation_saves_and_snapshots_api_configuration(api_client):

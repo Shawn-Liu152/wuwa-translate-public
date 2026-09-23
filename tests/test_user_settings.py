@@ -119,6 +119,22 @@ def test_api_key_uses_credential_store_and_never_enters_public_json(tmp_path):
     assert second.resolve_api_key() == "super-secret-value"
 
 
+def test_explicit_session_key_does_not_write_credential_or_settings(tmp_path):
+    path = tmp_path / "settings.json"
+    credentials = FakeCredentialStore()
+    store = UserSettingsStore(path, credential_store=credentials)
+    store.update({"api_key": "older-saved", "api_key_storage": "secure"})
+
+    public = store.update({"api_key": "current-session", "api_key_storage": "session"})
+
+    assert public["api_key_persistence"] == "session"
+    assert store.resolve_api_key() == "current-session"
+    assert credentials.read() == "older-saved"
+    assert "current-session" not in path.read_text(encoding="utf-8")
+    restarted = UserSettingsStore(path, credential_store=credentials)
+    assert restarted.resolve_api_key() == "older-saved"
+
+
 def test_updating_other_fields_does_not_delete_saved_api_key(tmp_path):
     credentials = FakeCredentialStore()
     store = UserSettingsStore(

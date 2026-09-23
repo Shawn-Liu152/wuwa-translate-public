@@ -410,6 +410,11 @@ def _validate_user_settings_update(payload: dict) -> dict:
         validated["api_key"] = _clean_text(
             payload["api_key"], "API key", required=False, limit=8192,
         )
+    if "api_key_storage" in payload:
+        storage = payload["api_key_storage"]
+        if storage not in {"session", "secure"}:
+            raise HTTPException(422, "API Key 保存方式无效")
+        validated["api_key_storage"] = storage
     return validated
 
 
@@ -428,10 +433,12 @@ def _translation_settings_snapshot(public: dict | None = None) -> dict:
     }
 
 
-def _resolve_request_api_key(value: str | None) -> str:
+def _resolve_request_api_key(
+    value: str | None, storage: str = "secure",
+) -> str:
     secret = _clean_text(value, "API key", required=False, limit=8192)
     if secret:
-        _persist_user_settings({"api_key": secret})
+        _persist_user_settings({"api_key": secret, "api_key_storage": storage})
     return user_settings.resolve_api_key(secret)
 
 
@@ -1140,6 +1147,7 @@ async def create_job_from_url(
     model: Optional[str] = Form(None),
     round2_model: Optional[str] = Form(None),
     api_key: str = Form(""),
+    api_key_storage: str = Form("secure"),
     batch_size: Optional[int] = Form(None),
     local_whisper: Optional[bool] = Form(None),
     download_video: bool = Form(True),
@@ -1170,6 +1178,7 @@ async def create_job_from_url(
     supplied_key = _clean_text(api_key, "API key", required=False, limit=8192)
     if supplied_key:
         settings_updates["api_key"] = supplied_key
+        settings_updates["api_key_storage"] = api_key_storage
     public_settings = _persist_user_settings(settings_updates)
     translation_snapshot = _translation_settings_snapshot(public_settings)
     proxy_value = translation_snapshot["proxy"]
@@ -1274,6 +1283,7 @@ async def start_translation(
     model: Optional[str] = Form(None),
     round2_model: Optional[str] = Form(None),
     api_key: str = Form(""),
+    api_key_storage: str = Form("secure"),
     base_url: Optional[str] = Form(None),
     proxy: Optional[str] = Form(None),
     batch_size: Optional[int] = Form(None),
@@ -1351,9 +1361,9 @@ async def start_translation(
                 target_value if target_value is not None else existing.get("target_language"),
             ))
         _persist_user_settings(options)
-        secret = _resolve_request_api_key(api_key)
+        secret = _resolve_request_api_key(api_key, api_key_storage)
         if not options["dry_run"] and not secret:
-            raise HTTPException(422, "请先保存 API Key")
+            raise HTTPException(422, "请先配置 API Key")
         return _public_payload(manager.start_translation(
             job_id, secret, translation_options=options
         ))
@@ -1462,7 +1472,7 @@ def generate_round2_suggestion(
     try:
         secret = _resolve_request_api_key(api_key)
         if not secret:
-            raise HTTPException(422, "请先保存 API Key")
+            raise HTTPException(422, "请先配置 API Key")
         return manager.generate_round2_suggestion(job_id, key, secret)
     except FileNotFoundError:
         raise HTTPException(404, "Round 2 state is unavailable")
@@ -1470,6 +1480,26 @@ def generate_round2_suggestion(
         raise HTTPException(404, "Risk item not found")
     except ValueError as error:
         raise HTTPException(422, _safe_validation_detail(error))
+
+
+@app.get("/api/jobs/{job_id}/subtitle-preview/{name}")
+def subtitle_preview(job_id: str, name: str):
+    if name not in {"final.zh.srt", "final.reviewed.zh.srt"}:
+        raise HTTPException(404, "字幕预览不存在")
+    try:
+        path = manager.artifact_path(job_id, name)
+        from pipeline.parser.srt_parser import parse_srt
+        cues = parse_srt(str(path))
+    except (FileNotFoundError, ValueError, UnicodeError):
+        raise HTTPException(404, "字幕预览不存在") from None
+    return {
+        "name": name,
+        "total": len(cues),
+        "cues": [
+            {"id": cue.id, "start": cue.start, "text": cue.text}
+            for cue in cues[:8]
+        ],
+    }
 
 
 @app.get("/api/jobs/{job_id}/artifacts/{name}")
@@ -1600,6 +1630,7 @@ async def stream_events(job_id: str, after: int = 0):
 async def retry_failed_job(
     job_id: str,
     api_key: str = Form(""),
+    api_key_storage: str = Form("secure"),
     model: str = Form(""),
     round2_model: str = Form(""),
     base_url: Optional[str] = Form(None),
@@ -1618,7 +1649,7 @@ async def retry_failed_job(
     cookie_payload = None
     try:
         restart = bool(_form_value(restart))
-        secret = _resolve_request_api_key(api_key)
+        secret = _resolve_request_api_key(api_key, api_key_storage)
         model = _clean_text(model, "模型名称", required=False, limit=200)
         round2_model = _clean_text(
             round2_model, "Round 2 模型名称",
@@ -1785,9 +1816,11 @@ def batch_retry_jobs(payload: dict):
     ):
         raise HTTPException(422, "需要 Cookie 的下载任务请逐个更新认证后重试")
     needs_key = not is_download and not bool(profile[-1])
-    secret = _resolve_request_api_key(payload.get("api_key", ""))
+    secret = _resolve_request_api_key(
+        payload.get("api_key", ""), payload.get("api_key_storage", "secure"),
+    )
     if needs_key and not secret:
-        raise HTTPException(422, "请先保存 API Key")
+        raise HTTPException(422, "请先配置 API Key")
     restart = bool(payload.get("restart", False))
     result = {"queued": [], "errors": {}}
     for job_id in ids:

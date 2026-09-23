@@ -945,6 +945,30 @@ button:disabled {
 }
 
 .overview-download .section-title { margin-bottom: 10px; }
+.completed-delivery {
+  border: 2px solid #7eb4e8;
+  background: #f2f8ff;
+}
+.completed-delivery .final-download { margin-top: 12px; }
+.subtitle-preview {
+  margin-top: 12px;
+  max-height: 310px;
+  overflow-y: auto;
+  padding: 10px 12px;
+  border: 1px solid #b6d0ed;
+  border-radius: 10px;
+  background: #fff;
+}
+.subtitle-preview-list {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding-left: 22px;
+}
+.subtitle-preview-list li { padding-left: 3px; color: #17345d; }
+.subtitle-preview-list time { display: block; color: #5f789b; font: 11px/1.4 ui-monospace, Consolas, monospace; }
+.subtitle-preview-list span { display: block; margin-top: 2px; line-height: 1.55; white-space: normal; }
+.subtitle-preview-note { margin: 7px 0 0; color: #5f789b; font-size: 11px; }
 
 .pipeline-stage-summary {
   display: grid;
@@ -4425,8 +4449,9 @@ input[type="file"]::file-selector-button,
 }
 
 .risk-summary > div.attention {
-  border-color: #e2ad1b;
-  background: #fff4c7;
+  border-color: #d99800;
+  background: #fff0ad;
+  box-shadow: 0 0 0 3px rgba(226, 173, 27, .15);
 }
 
 .risk-summary > div.clear {
