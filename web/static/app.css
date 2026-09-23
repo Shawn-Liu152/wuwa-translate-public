@@ -2295,11 +2295,12 @@ body.workbench-active.empty-state .workspace-grid {
 }
 
 @media (max-width: 680px) {
-  .workbench-header {
-    min-height: 174px;
-    padding: 22px 18px 66px;
+  main .workbench-header {
+    min-height: 0;
+    padding: 22px 18px 70px;
   }
 
+  .workbench-header h1 { max-width: none; font-size: 34px; }
   .workbench-header .jiubi-sticker { display: none; }
 
   .header-actions {

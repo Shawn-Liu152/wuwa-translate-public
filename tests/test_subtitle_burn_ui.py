@@ -25,7 +25,7 @@ def test_burned_video_uses_existing_artifact_download_and_cache_pins():
     assert "下载带字幕视频" in script
     assert "真正待处理 0" in page
     assert "自动处理完成的条目不会再次拦截视频生成" in page
-    assert "app.css?v=20260923-ui-fixes-css25" in page
+    assert "app.css?v=20260923-ui-fixes-css26" in page
     assert "app.js?v=20260923-ui-fixes-v32" in page
-    assert "app.css?v=20260923-ui-fixes-css25" in api_tests
+    assert "app.css?v=20260923-ui-fixes-css26" in api_tests
     assert "app.js?v=20260923-ui-fixes-v32" in api_tests

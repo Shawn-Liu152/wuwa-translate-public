@@ -524,7 +524,7 @@ def test_workbench_preserves_visual_identity_without_template_motion():
     page = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
     styles = (WEB_ROOT / "static" / "app.css").read_text(encoding="utf-8")
 
-    assert "app.css?v=20260923-ui-fixes-css25" in page
+    assert "app.css?v=20260923-ui-fixes-css26" in page
     assert "--ease-authored: cubic-bezier(.16, 1, .3, 1)" in styles
     assert "animation: phoebe-float 7s ease-in-out infinite" in styles
     assert "animation: toast-in .22s var(--ease-authored)" in styles
