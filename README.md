@@ -2,11 +2,13 @@
 
 **当前版本：0.2.0-beta.3 · Beta 测试版 · 支持英语 / 日语 / 韩语 → 简体中文**
 
-公开源码版：包含最新交付、会话恢复和列表优化；不包含私人任务、翻译记忆、内部报告或旧 Git 历史。便携包暂未在本仓库发布，请使用下方源码安装步骤。
+公开源码版：包含最新交付、会话恢复和列表优化；不包含私人任务、翻译记忆、内部报告或旧 Git 历史。便携包请到 [GitHub Releases](https://github.com/Shawn-Liu152/wuwa-translate-public/releases) 下载；如该版本尚无便携附件，可按下方步骤源码安装。
 
 面向 Windows 桌面端的本地字幕翻译工具。它可以下载 YouTube
 视频与同语言字幕，按需调用本地 Whisper 补充语音识别，再通过兼容
 OpenAI `chat/completions` 的模型完成中文翻译、术语统一和风险复核。
+
+项目原创代码与文档采用 [MIT 许可证](LICENSE)。第三方运行时、角色素材、游戏名称和商标不因此获得 MIT 授权；组件声明见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
 
 所有任务文件默认保存在项目的 `download/<任务 ID>/` 中。API Base URL、主模型和代理由后端原子保存并在下次启动时恢复；API Key 在 Windows 上保存到 Credential Manager，API 只返回“已配置”状态而不回显原文。安全存储不可用时仅退回当前会话，绝不写入 JSON、localStorage、任务文件或日志。
 

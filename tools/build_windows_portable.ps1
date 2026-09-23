@@ -47,6 +47,7 @@ $sourceStageRoot = Get-CheckedChildPath `
 
 $trackedBuildInputs = @(
   "CHANGELOG.md",
+  "LICENSE",
   "README.md",
   "THIRD-PARTY-NOTICES.md",
   "VERSION",
@@ -118,6 +119,7 @@ try {
 
   $runtimeRoots = @(
     "CHANGELOG.md",
+    "LICENSE",
     "README.md",
     "THIRD-PARTY-NOTICES.md",
     "VERSION",

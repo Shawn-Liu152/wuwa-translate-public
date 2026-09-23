@@ -2,7 +2,9 @@
 
 The Windows portable package is assembled from the project's committed Git
 revision.  It does not include FFmpeg, Whisper, CUDA, model files, browser
-cookies, API keys, or private task data.
+cookies, API keys, or private task data. Project-authored code and documentation
+use the MIT License in LICENSE; this does not relicense third-party components,
+artwork, game assets or trademarks.
 
 ## CPython
 

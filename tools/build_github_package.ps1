@@ -33,6 +33,7 @@ New-Item -ItemType Directory -Path $target -Force | Out-Null
 $topLevelFiles = @(
   ".gitignore",
   "CHANGELOG.md",
+  "LICENSE",
   "docs\assets\demo-workbench.png",
   "README.md",
   "THIRD-PARTY-NOTICES.md",
