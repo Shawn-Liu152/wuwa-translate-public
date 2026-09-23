@@ -7,3 +7,5 @@ This repository starts with new history and excludes local tasks, reports, scree
 Project-authored source code and documentation are MIT licensed; see LICENSE. This grant does not relicense third-party runtime components, artwork, game assets or trademarks; see THIRD-PARTY-NOTICES.md. Windows portable assets are distributed through GitHub Releases with SHA-256 checksums; follow WINDOWS-PORTABLE.md.
 
 The translation-memory file is an empty schema, not the owner's memory. Historical evidence and corpus checks remain explicit skips.
+
+The historical private-workspace notes in `docs/PROJECT_STRUCTURE.md`, `docs/DATA_CONTRACT.md`, `docs/LANGUAGE_PIPELINE_MATRIX.md`, and `security_best_practices_report.md` retain their original dates and do not describe the current public release. See `docs/PUBLIC_SECURITY_PRIVACY_STATUS.md` for the current publication boundary and unresolved audit scope. A new release is established only when its tag, CI result, assets, and checksum are verified on GitHub.

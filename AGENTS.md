@@ -1,7 +1,7 @@
 # 项目维护规则
 
 > 项目：`<PROJECT_ROOT>`
-> 阅读入口：先读 `PUBLICATION.md`（公开版边界）→ `docs/TRANSLATION_CONTRACT.md`（翻译契约）→ `docs/WUWA_LORE_GUIDE.md`（剧情/专名参考）→ `docs/DATA_CONTRACT.md`（数据职责）。
+> 阅读入口：先读 `PUBLICATION.md`（公开版边界）→ `docs/PUBLIC_SECURITY_PRIVACY_STATUS.md`（公开数据边界）→ `docs/TRANSLATION_CONTRACT.md`（翻译契约）→ `docs/WUWA_LORE_GUIDE.md`（剧情/专名参考）→ `docs/DATA_CONTRACT.md`（含历史私有数据记录）。
 
 ## 工程规则（必须遵守）
 
@@ -14,8 +14,9 @@
 ## 关键测试命令
 
 ```bash
-# pytest（Git Bash，必须 unset PYTHONPATH；用项目 .venv，testenv 已失效）
-unset PYTHONPATH && .venv/Scripts/python.exe -m pytest -q -p no:cacheprovider --basetemp=/tmp/pytest-$(date +%s)
+# 先创建带独立 .git 的新隔离副本，只在副本内运行；用副本的 .venv。
+# Git Bash 中清空 PYTHONPATH，basetemp 必须在副本内部。
+unset PYTHONPATH && .venv/Scripts/python.exe -m pytest -q -p no:cacheprovider --basetemp=.pytest-isolated
 
 # JS 语法
 node --check web/static/app.js && node --check web/static/pet.js && node --check web/static/workbench-core.js

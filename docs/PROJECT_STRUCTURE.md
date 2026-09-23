@@ -1,6 +1,6 @@
 # 项目与用户目录结构
 
-> 当前事实：2026-09-10。父目录整理不改变 `download/<job_id>`、resume、manifest 或 Web API 契约。
+> 历史私有工作区记录（2026-09-10）：下文的 `cc/程序文件/`、桌面入口和 NTFS Junction 是原私有项目的本机布局，不是当前公开仓库或 Windows 便携包的默认目录。公开版使用方式见 [README](../README.md) 与 [便携版说明](../WINDOWS-PORTABLE.md)。父目录整理不改变当时的 `download/<job_id>`、resume、manifest 或 Web API 契约。
 
 ## 用户可见目录
 

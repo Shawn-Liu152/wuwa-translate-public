@@ -2,7 +2,7 @@
 
 **当前版本：0.2.0-beta.6 · Beta 测试版 · 支持英语 / 日语 / 韩语 → 简体中文**
 
-公开仓库提供源码和 [beta.6 Windows 便携版](https://github.com/Shawn-Liu152/wuwa-translate-public/releases/tag/v0.2.0-beta.6)。公开内容不包含私人任务、翻译记忆、内部报告或旧 Git 历史。
+公开仓库提供源码；已发布的 Windows 便携版请从 [Releases](https://github.com/Shawn-Liu152/wuwa-translate-public/releases) 下载，并以发布页和校验文件确认实际版本。公开内容不包含私人任务、个人翻译记忆、内部报告或原私有仓库的旧 Git 历史。
 
 面向 Windows 桌面端的本地字幕翻译工具。它可以下载 YouTube
 视频与同语言字幕，按需调用本地 Whisper 补充语音识别，再通过兼容
@@ -116,7 +116,7 @@ OpenAI `chat/completions` 的模型完成中文翻译、术语统一和风险复
 
 Round 1 默认保留临近的完整句，附带前后六条局部证据、最近十二条对话、
 视频标题、频道和全片锁定专名。人工修改会写入本机
-`data/translation_memory.json`；该文件不进入发布包，也不会在未批准时注入模型。
+`data/translation_memory.json`；公开仓库只含空结构，个人记忆不进入发布包，也不会在未批准时注入模型。
 
 ## 费用估算
 
@@ -144,12 +144,18 @@ Round 1 默认保留临近的完整句，附带前后六条局部证据、最近
 
 ## 开发与验收
 
+维护者须在带独立 `.git` 的新隔离副本内运行 pytest，清空 `PYTHONPATH`，并将
+`--basetemp` 放在该副本内部；不要在原私有仓库或带真实任务数据的目录运行。
+
 ```powershell
-.venv\Scripts\python.exe -m pytest -q
+Remove-Item Env:PYTHONPATH -ErrorAction SilentlyContinue
+.venv\Scripts\python.exe -m pytest -q --basetemp .pytest-public
 node --check web\static\app.js
 ```
 
-翻译质量工具默认离线或 dry-run；真实模型调用与数据写入都必须显式开启：
+以下是私有开发环境的历史维护示例，依赖公开快照**未附带**的 `benchmarks/`、
+`reports/` 或真实任务。直接克隆公开仓库不能照抄执行；切勿用用户字幕补齐样本后提交。
+真实模型调用与数据写入仍须显式开启：
 
 ```powershell
 # 汇总既有任务，不改写历史产物
@@ -171,7 +177,7 @@ node --check web\static\app.js
 
 Benchmark CSV 只有填写真实 reviewer、带时区的 reviewed_at 与 evidence 后，才
 能通过显式 `--apply` 升级状态；Codex/ChatGPT/AI/“human”等自动或占位身份会被
-拒绝。付费模型 A/B 还需满足 `reports/AB_READINESS_REPORT.md` 的全部门禁。
+拒绝。私有付费模型 A/B 还需满足未公开的 `reports/AB_READINESS_REPORT.md` 门禁。
 
 翻译质量改动应优先使用真实任务中经过人工确认的脱敏样本做前后对比；自动化测试
 负责守住字幕解析、术语、人名风险、Round 2 门禁、任务恢复和导出等确定性行为，
@@ -183,7 +189,7 @@ Benchmark CSV 只有填写真实 reviewer、带时区的 reviewed_at 与 evidenc
 - `web/`：FastAPI 服务和桌面端页面。
 - `data/`：提示词、官方术语、别名和易错识别映射。
 - `tests/`：算法、任务恢复、Web API 与导出等确定性回归测试。
-- `reports/`：任务指标、官方证据、TM/few-shot、Round 2 与 A/B 门禁审计。
+- `reports/`：仅私有维护环境生成的任务指标、证据和审计报告；不在公开仓库中。
 
 原创测试素材：
 
@@ -192,7 +198,7 @@ Benchmark CSV 只有填写真实 reviewer、带时区的 reviewed_at 与 evidenc
 
 版本记录：
 
-- [`VERSION`](VERSION)：当前 Demo 版本。
+- [`VERSION`](VERSION)：当前源码版本；已发布安装包以 Releases 为准。
 - [`CHANGELOG.md`](CHANGELOG.md)：版本更新与已知限制。
 
 ## 维护约定
@@ -217,11 +223,15 @@ Benchmark CSV 只有填写真实 reviewer、带时区的 reviewed_at 与 evidenc
 
 - 不要提交 `.env`、API 密钥、视频、任务目录或日志；这些内容已被 `.gitignore` 排除。
 - 已经在聊天、截图或 Git 历史中暴露过的密钥应立即在服务商后台作废并重新生成。
-- 现有私有仓库的旧提交可能保留作者邮箱或历史本机路径，不能直接改成公开仓库。对外分享请只使用下方脚本生成的无历史目录，并在新的空仓库中首次提交。
-- 本项目尚未附带开源许可证。公开 GitHub 仓库前应先确定许可证，并确认图片素材和游戏专有名词数据的使用方式。
+- 原私有仓库的旧提交可能保留作者邮箱或历史本机路径，不得直接将其设为 Public；当前公开仓库是单独脱敏创建的，发布前仍须扫描新增内容和公开 Git 历史。
+- 原创代码与文档已按 MIT 授权；第三方素材、游戏内容及商标遵循各自权利声明，详见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
+- 当前隐私边界和仍待核查项见 [公开版安全与隐私状态](docs/PUBLIC_SECURITY_PRIVACY_STATUS.md)。
 - YouTube 下载和字幕处理应遵守平台条款、版权与当地法律，只处理有权使用的内容。
 
-## 生成 GitHub 发布目录
+## 从私有原项目生成公开源快照（维护者）
+
+这一工具只供维护原私有项目时使用。当前公开仓库已经建立，不应再次创建仓库；
+日常发布应从当前公开仓库经检查的 committed `HEAD` 构建并更新现有 Releases。
 
 在项目根目录运行：
 
@@ -235,8 +245,8 @@ powershell -ExecutionPolicy Bypass -File tools\build_github_package.ps1
 不会整目录复制。发布目录也不会包含 `download/`、`reports/`、
 内部交接/审计材料、虚拟环境、运行时依赖、缓存、Cookie、日志或任务数据。
 生成前还会拒绝常见密钥、个人邮箱、本机用户目录和当前系统账号标识，最后生成
-SHA-256 文件清单。该目录没有原仓库 Git 历史，适合在确认许可证和素材授权后
-作为新仓库的首次提交来源。
+SHA-256 文件清单。该目录不含原仓库 Git 历史；生成目录本身不代表已完成
+隐私、第三方权利或公开历史审查。
 
 ## 生成 Windows x64 便携包
 

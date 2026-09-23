@@ -1,10 +1,12 @@
-# LANGUAGE_PIPELINE_MATRIX — 三语真实流水线（以当前代码为准）
+# LANGUAGE_PIPELINE_MATRIX — 三语流水线历史快照
 
-> 更新：2026-08-10
+> 历史私有开发记录，更新于 2026-08-10，所列旧 HEAD、模型端点、数据数量、视频样本和代码行号不代表当前公开 Beta 的行为或配置。当前使用与交付说明见 [README](../README.md)，质量门禁见 [翻译契约](TRANSLATION_CONTRACT.md)，实际实现以当前源码为准。
+>
+> 原始依据：
 > 依据：`pipeline/long_video.py`（run_long_video 主流程）、`pipeline/main.py`（run_pipeline）、
 > `pipeline/preprocess/*`、`pipeline/translate/*`、`pipeline/risk_queue.py`、`pipeline/display_cues.py`
 > HEAD: 100b2b9（master）
-> 本文件描述**当前代码实际执行**的流程，旧文档描述不再作为依据。
+> 本文件仅保留该历史快照的结构分析，不能作为当前代码的验收依据。
 
 ## 1. 总览
 

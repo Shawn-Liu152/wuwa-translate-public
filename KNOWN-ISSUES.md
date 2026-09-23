@@ -1,5 +1,7 @@
 # Compatibility status
 
+This page records resolved regressions from the `af299e2` public snapshot, not a claim that every Windows configuration has been tested. For the current source version and release assets, see README.md and GitHub Releases. The test counts below are historical evidence from the fix, not a beta.6 full-suite result.
+
 The two limits documented for the `af299e2` snapshot are addressed in this revision. Both have deterministic regression tests.
 
 - **Uploads across volumes:** Uploads may start in system TEMP on a different Windows drive from task storage. Direct task creation now copies each file to a temporary path inside the task workspace, atomically replaces the destination on that volume, and cleans temporary uploads. `tests/test_web_jobs.py` simulates a cross-device rename failure.
