@@ -125,7 +125,6 @@ try {
     "VERSION",
     "WINDOWS-PORTABLE.md",
     "data",
-    "docs",
     "pipeline",
     "stop_web.bat",
     "web"
