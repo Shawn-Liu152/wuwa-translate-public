@@ -40,3 +40,22 @@ jobs:
           $env:PYTHONIOENCODING = "utf-8"
           $env:PYTHONUTF8 = "1"
           python -m pytest -q -p no:cacheprovider --basetemp="$env:GITHUB_WORKSPACE\.pytest-public"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Frontend behavior tests
+        shell: pwsh
+        run: |
+          node --test tests/delivery_frontend.test.cjs tests/session_recovery.test.cjs tests/frontend_feedback.test.cjs tests/static/workbench_core.test.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Portable package build
+        shell: pwsh
+        run: |
+          python -m pip install uv==0.11.23
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $uvPath = (Get-Command uv -ErrorAction Stop).Source
+          & .\tools\build_windows_portable.ps1 -OutputRoot "$env:GITHUB_WORKSPACE\.ci-portable" -UvPath $uvPath
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $version = (Get-Content VERSION -Raw).Trim()
+          $zip = Join-Path "$env:GITHUB_WORKSPACE\.ci-portable" "subtitle-pipeline-$version-windows-x64-portable.zip"
+          $expected = ((Get-Content "$zip.sha256" -Raw) -split "\s+")[0]
+          $actual = (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($expected -ne $actual) { throw "Portable archive hash mismatch" }
