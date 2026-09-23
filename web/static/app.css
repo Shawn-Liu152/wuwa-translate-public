@@ -2297,8 +2297,10 @@ body.workbench-active.empty-state .workspace-grid {
 @media (max-width: 680px) {
   .workbench-header {
     min-height: 174px;
-    padding: 22px 18px;
+    padding: 22px 18px 66px;
   }
+
+  .workbench-header .jiubi-sticker { display: none; }
 
   .header-actions {
     top: auto;
@@ -4235,6 +4237,16 @@ input[type="file"]::file-selector-button,
 .toast-copy { display: grid; gap: 1px; }
 .toast-copy b { color: #fff; font-size: 12px; }
 .toast-copy span { color: #dceaff; }
+
+.toast-info {
+  color: #17345d;
+  border-color: #7999c2;
+  background: #eef6ff;
+}
+
+.toast-info .toast-mark,
+.toast-info .toast-copy b { color: #17345d; }
+.toast-info .toast-copy span { color: #36577f; }
 
 .toast-warning {
   color: #17345d;

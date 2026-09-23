@@ -7,7 +7,7 @@
   <meta name="description" content="本地视频字幕翻译、术语管理与风险审校工作台">
   <title>视频字幕翻译工作台</title>
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/static/app.css?v=20260923-cli-encoding-css24">
+  <link rel="stylesheet" href="/static/app.css?v=20260923-ui-fixes-css25">
   <link rel="stylesheet" href="/static/pet.css?v=20260729-pet-fit1">
 </head>
 <body class="workbench-active empty-state">
@@ -64,7 +64,7 @@
     <div class="rail-foot">
       <span class="service-status"><span class="dot" aria-hidden="true"></span> 本地服务</span>
       <small id="health" aria-live="polite">检测中…</small>
-      <small class="app-version" id="app-version" translate="no">v0.2.0-beta.3</small>
+      <small class="app-version" id="app-version" translate="no">v0.2.0-beta.4</small>
     </div>
   </aside>
 
@@ -1022,7 +1022,7 @@
             </details>
             <details class="faq-item" data-faq-keywords="api key 密钥 隐私 保存 浏览器 刷新 session storage 代理 密码">
               <summary><span>Q</span>API Key 和代理凭据会保存在哪里？</summary>
-              <div><p><b>现象：</b>填写密钥后关闭并重开工作台，页面只显示“已安全保存”，不再回显原文。<br><b>原因：</b>普通配置原子写入当前 Windows 用户的 <code>%LOCALAPPDATA%\PhoebeSubtitleLab\settings.json</code>；API Key 单独保存到 Windows Credential Manager 的 <code>PhoebeSubtitleLab/APIKey</code>。API、设置 JSON、浏览器存储、任务文件和日志都不会得到 Key 原文。<br><b>操作步骤：</b>需要更换时在设置页粘贴新 Key 并保存；需要删除时点击“忘记已保存 API Key”。若系统安全存储不可用，页面会提示 Key 仅本次程序会话有效，绝不会退回明文文件。</p></div>
+              <div><p><b>现象：</b>填写密钥后关闭并重开工作台，页面只显示“已安全保存”，不再回显原文。<br><b>原因：</b>普通配置原子写入当前 Windows 用户的 <code>%LOCALAPPDATA%\PhoebeSubtitleLab\settings.json</code>；API Key 单独保存到 Windows Credential Manager 的 <code>PhoebeSubtitleLab/APIKey</code>。API、设置 JSON、浏览器存储、任务文件和日志都不会得到 Key 原文。<br><b>操作步骤：</b>需要更换时在设置页粘贴新 Key 并保存；需要删除时点击“忘记已保存 API Key”。若系统安全存储不可用，页面会提示 Key 仅本次程序会话有效，绝不会退回明文文件。批量重试翻译任务前也需先保存 Key；若尚未配置，工作台会提示到“设置与帮助”填写，任务不会开始重试。</p></div>
             </details>
             <details class="faq-item" data-faq-keywords="工作台 会话无效 401 随机端口 8765 启动脚本 书签">
               <summary><span>Q</span>为什么旧书签打不开，或者页面提示工作台会话无效？</summary>
@@ -1082,6 +1082,6 @@
   <script src="/static/pet.js?v=20260729-pets4"></script>
   <script src="/static/workbench-formatters.js?v=20260911-format1"></script>
   <script src="/static/workbench-core.js?v=20260921-core4"></script>
-  <script src="/static/app.js?v=20260923-cli-encoding-v31"></script>
+  <script src="/static/app.js?v=20260923-ui-fixes-v32"></script>
 </body>
 </html>

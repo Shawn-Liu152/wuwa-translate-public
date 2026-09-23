@@ -524,7 +524,7 @@ def test_workbench_preserves_visual_identity_without_template_motion():
     page = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
     styles = (WEB_ROOT / "static" / "app.css").read_text(encoding="utf-8")
 
-    assert "app.css?v=20260923-cli-encoding-css24" in page
+    assert "app.css?v=20260923-ui-fixes-css25" in page
     assert "--ease-authored: cubic-bezier(.16, 1, .3, 1)" in styles
     assert "animation: phoebe-float 7s ease-in-out infinite" in styles
     assert "animation: toast-in .22s var(--ease-authored)" in styles
@@ -535,7 +535,7 @@ def test_workbench_explains_context_memory_and_requires_explicit_reuse():
     page = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
     app_script = (WEB_ROOT / "static" / "app.js").read_text(encoding="utf-8")
 
-    assert "app.js?v=20260923-cli-encoding-v31" in page
+    assert "app.js?v=20260923-ui-fixes-v32" in page
     assert "生成交付文件" in page
     assert 'id="session-recovery"' in page
     assert '会话已失效' in page
@@ -706,6 +706,7 @@ def test_workbench_has_searchable_usage_and_faq_pages():
     assert "UnicodeEncodeError" in page
     assert "跨盘上传失败" in page
     assert "WinError 17" in page
+    assert "批量重试翻译任务前也需先保存 Key" in page
     assert "当前清晰度不可用，已自动降级重试" in page
     assert "YouTube 会话不匹配，已改用匿名方式重试" in page
     assert "yt-dlp 合并异常，已改用 ffmpeg 本地合并" in page

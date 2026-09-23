@@ -325,9 +325,10 @@ const STATUS_LABELS = {
 function showToast(message, kind = 'success') {
   const toast = $('#toast');
   if (!toast) return;
-  const normalizedKind = ['error', 'warning'].includes(kind) ? kind : 'success';
+  const normalizedKind = ['info', 'error', 'warning'].includes(kind) ? kind : 'success';
   const presentation = {
     success: { mark: '✓', title: '操作已完成' },
+    info: { mark: 'i', title: '提示' },
     warning: { mark: '!', title: '还需要确认' },
     error: { mark: '×', title: '操作未完成' },
   }[normalizedKind];
@@ -1636,9 +1637,15 @@ window.batchJobAction = async function batchJobAction(action, ids) {
       showToast(eligibility.reason, 'info');
       return;
     }
+    if (eligibility.needsKey && !userSettings.api_key_configured) {
+      showToast('请先到“设置与帮助”保存 API Key，再批量重试', 'warning');
+      return;
+    }
     const confirmed = await confirmAction({
       title: '重试所选失败任务',
-      message: `将按原配置继续 ${ids.length} 个同类失败任务，并复用安全保存的 API Key。`,
+      message: eligibility.needsKey
+        ? `将按原配置继续 ${ids.length} 个同类失败任务，并复用安全保存的 API Key。`
+        : `将按原配置继续 ${ids.length} 个同类失败任务。`,
       confirmLabel: '开始重试',
     });
     if (!confirmed) return;
