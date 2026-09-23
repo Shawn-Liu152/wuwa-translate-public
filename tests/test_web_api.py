@@ -483,6 +483,8 @@ def test_workbench_blocks_primary_delivery_until_required_review_is_clear():
 
     assert "翻译完成后在哪里预览和下载中文字幕？" in page
     assert "自动字幕还不能作为可交付版本" in page
+    assert "必审项清零后交付" in page
+    assert "有必审风险时先确认或修正" in page
     assert "处理必审风险" in app_script
     assert "下载自动版字幕（尚未完成审校）" in app_script
     assert "下载可交付中文字幕" in app_script

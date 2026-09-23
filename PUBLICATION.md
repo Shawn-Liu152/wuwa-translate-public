@@ -1,6 +1,6 @@
 # Public source snapshot
 
-Latest workbench code includes review-to-delivery, existing-instance reopening, session recovery and lightweight list/SSE reads.
+This public Windows Beta is a local Wuthering Waves subtitle translation workbench for English, Japanese and Korean to Simplified Chinese. It supports source subtitle download or SRT upload, translation, focused human review, Chinese preview and gated delivery. The user supplies their own compatible model API Key.
 
 This repository starts with new history and excludes local tasks, reports, screenshots, translation memory, private benchmark corpora and corpus-seeding scripts. The glossary retains curated game terms; SQLite unused pages are removed in this public copy. Private-corpus tests are explicitly skipped. No private history is imported.
 

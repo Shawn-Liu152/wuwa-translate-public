@@ -64,7 +64,7 @@
     <div class="rail-foot">
       <span class="service-status"><span class="dot" aria-hidden="true"></span> 本地服务</span>
       <small id="health" aria-live="polite">检测中…</small>
-      <small class="app-version" id="app-version" translate="no">v0.2.0-beta.5</small>
+      <small class="app-version" id="app-version" translate="no">v0.2.0-beta.6</small>
     </div>
   </aside>
 
@@ -508,7 +508,7 @@
           <div>
             <p class="eyebrow" translate="no">MY WORKBENCH</p>
             <h2>把常用习惯放在这里</h2>
-            <p>普通配置保存在当前 Windows 用户目录；API Key 单独保存到系统凭据管理器，页面只显示保存状态。</p>
+            <p>普通配置保存在当前 Windows 用户目录；新 API Key 可选仅本次会话或安全保存到系统凭据管理器，页面不回显密钥。</p>
           </div>
           <span class="settings-stamp" aria-hidden="true">本机设置</span>
         </div>
@@ -701,7 +701,7 @@
             </li>
             <li>
               <span class="manual-number">6</span>
-              <div><h4>下载并整理</h4><p>没做人工修改就下载 <code>final.zh.srt</code>；保存过人工审校则优先下载 <code>final.reviewed.zh.srt</code>。想让目录清爽时，点击“整理过程文件”，它不会删除任何文件。</p></div>
+              <div><h4>预览、审校并下载</h4><p>完成后先看中文字幕预览；有必审风险时先确认或修正。必审项清零后，未做人工修改可下载 <code>final.zh.srt</code>，保存过人工审校则优先下载 <code>final.reviewed.zh.srt</code>。点击“整理过程文件”不会删除文件。</p></div>
               <em>完成</em>
             </li>
           </ol>
@@ -715,7 +715,7 @@
               <li>VPN 节点能正常打开 YouTube</li>
               <li>下载组件正常；FFmpeg 仅影响视频下载</li>
               <li>模型接口地址以 <code>/v1</code> 结尾；远程接口只允许 HTTPS</li>
-              <li>API Key 已安全保存，或准备在本次会话重新输入</li>
+              <li>API Key 已配置（本次会话或安全保存），或准备重新输入</li>
             </ul>
           </section>
           <section class="manual-tip-card">
@@ -748,7 +748,7 @@
         </div>
         <div class="file-map">
           <article class="file-best"><span>人工审校后</span><code>final.reviewed.zh.srt</code><b>最优先下载</b></article>
-          <article><span>自动流程完成</span><code>final.zh.srt</code><b>直接使用</b></article>
+          <article><span>自动流程完成</span><code>final.zh.srt</code><b>必审项清零后交付</b></article>
           <article><span>过程文件</span><code>英文来源 / manifest / risk / round2</code><b>统一收纳，不删除</b></article>
         </div>
       </section>
