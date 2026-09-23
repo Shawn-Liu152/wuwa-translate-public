@@ -2,6 +2,8 @@
 
 > 截至 2026-09-23 的范围说明，不是完整安全审计报告，也不保证不存在未知漏洞。当前源码版本为 `0.2.0-beta.6`；公开可下载版本应以 GitHub Releases 中已核实的标签、资产和校验文件为准。
 
+Beta.6 的 [公开 Release](https://github.com/Shawn-Liu152/wuwa-translate-public/releases/tag/v0.2.0-beta.6) 已核对：标签指向 `17f5c08b083b3976c5f5f699d895ac92979fd156`，main 和标签 CI 均成功；便携 ZIP 及 `.sha256` 已上传，ZIP 的 GitHub 服务端 SHA-256 为 `594ff252ae105a40f85fffd9d3e499d7b54fe119f307ec139b496e1cd370546e`。这些发布核对不等于全面安全或隐私审计通过。
+
 ## 公开与私有边界
 
 | 项目 | 当前边界 |

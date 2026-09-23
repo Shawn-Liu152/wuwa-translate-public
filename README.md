@@ -2,7 +2,7 @@
 
 **当前版本：0.2.0-beta.6 · Beta 测试版 · 支持英语 / 日语 / 韩语 → 简体中文**
 
-公开仓库提供源码；已发布的 Windows 便携版请从 [Releases](https://github.com/Shawn-Liu152/wuwa-translate-public/releases) 下载，并以发布页和校验文件确认实际版本。公开内容不包含私人任务、个人翻译记忆、内部报告或原私有仓库的旧 Git 历史。
+公开仓库提供源码和 [beta.6 Windows 便携版](https://github.com/Shawn-Liu152/wuwa-translate-public/releases/tag/v0.2.0-beta.6)；下载后请按发布页随附的 SHA-256 文件校验。公开内容不包含私人任务、个人翻译记忆、内部报告或原私有仓库的旧 Git 历史。
 
 面向 Windows 桌面端的本地字幕翻译工具。它可以下载 YouTube
 视频与同语言字幕，按需调用本地 Whisper 补充语音识别，再通过兼容
