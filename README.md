@@ -193,7 +193,7 @@ Benchmark CSV 只有填写真实 reviewer、带时区的 reviewed_at 与 evidenc
 
 原创测试素材：
 
-- [`examples/demo.en.srt`](examples/demo.en.srt)：33.6 秒、10 条英文字幕，
+- [公开源码中的 `examples/demo.en.srt`](https://github.com/Shawn-Liu152/wuwa-translate-public/blob/main/examples/demo.en.srt)：33.6 秒、10 条英文字幕，
   不包含影视、游戏或视频对白，可用于安装后的基础流程测试。
 
 版本记录：
@@ -225,7 +225,7 @@ Benchmark CSV 只有填写真实 reviewer、带时区的 reviewed_at 与 evidenc
 - 已经在聊天、截图或 Git 历史中暴露过的密钥应立即在服务商后台作废并重新生成。
 - 原私有仓库的旧提交可能保留作者邮箱或历史本机路径，不得直接将其设为 Public；当前公开仓库是单独脱敏创建的，发布前仍须扫描新增内容和公开 Git 历史。
 - 原创代码与文档已按 MIT 授权；第三方素材、游戏内容及商标遵循各自权利声明，详见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
-- 当前隐私边界和仍待核查项见 [公开版安全与隐私状态](docs/PUBLIC_SECURITY_PRIVACY_STATUS.md)。
+- 当前隐私边界和仍待核查项见 [公开版安全与隐私状态](https://github.com/Shawn-Liu152/wuwa-translate-public/blob/main/docs/PUBLIC_SECURITY_PRIVACY_STATUS.md)；基础便携包不附带内部文档目录。
 - YouTube 下载和字幕处理应遵守平台条款、版权与当地法律，只处理有权使用的内容。
 
 ## 从私有原项目生成公开源快照（维护者）
